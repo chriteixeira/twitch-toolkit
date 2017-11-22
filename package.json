@@ -1,0 +1,16 @@
+{
+  "name": "twitch.tv",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Christiano Teixeira",
+  "license": "MIT",
+  "dependencies": {
+    "eventemitter3": "2.0.3",
+    "request-promise": "4.2.2",
+    "tmi.js": "1.2.1"
+  }
+}
