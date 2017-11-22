@@ -1,14 +1,16 @@
 'use strict';
 
-const util = require("util");
+const util = require('util');
 
 const EventEmitter = require('eventemitter3');
-const tmi = require("tmi.js");
+const tmi = require('tmi.js');
 
-var textVars = ['@user'];
+const stringUtils = require('./stringUtils');
 
-function TwitchChatEmmiter(config) {
-    EventEmiiter.call(this);
+//var textVars = ['@user'];
+
+function TwitchChatEmmiter() {
+    EventEmitter.call(this);
 
     this.config = {
         username: process.env.TWITCH_USERNAME,
@@ -16,7 +18,8 @@ function TwitchChatEmmiter(config) {
         channels: [process.env.TWITCH_CHANNEL],
         options: {
             debug: true,
-            reconnect: true
+            reconnect: true,
+            ignoreSelf: true,
         },
         commands: {
             prefix: '!',
@@ -37,9 +40,9 @@ function TwitchChatEmmiter(config) {
     _initChatBot();
 }
 
-async function _initChatBot() {
+function _initChatBot() {
     try {
-        let _self = this;
+        let _this = this;
         var options = {
             options: {
                 debug: true
@@ -60,13 +63,7 @@ async function _initChatBot() {
         client.connect();
 
         client.on('chat', function (channel, userstate, message, self) {
-            message = message.trim();
-            if (message.indexOf(_this.config.commands.prefix) === 0) {
-                _this.emit('chatcommand', channel, userstate.username, command, self);
-            }
-            else {
-                _this.emit('chatmessage', channel, userstate.username, message, self);
-            }
+            handleChatMessage(client, channel, userstate, message, self);
         });
 
         client.on('part', function (channel, username, self) {
@@ -77,12 +74,32 @@ async function _initChatBot() {
             _this.emit('join', channel, username, self);
         });
     } catch (err) {
-        console.error(err);
+        //console.error(err);
+    }
+}
+
+function handleChatMessage(client, channel, userstate, message, self) {
+    message = message.trim();
+    if (message.indexOf(client.config.commands.prefix) === 0) {
+        let command = stringUtils.getFirstWord(message);
+        if (client.config.commands.basic[command]) {
+            client.say(channel, replaceTextVars(client.config.commands.basic[command], userstate.username));
+        }
+        else {
+            client.emit('chatCommand_' + command, channel, userstate.username, command, self);
+        }
+    }
+    else {
+        //if (client.config.text.basic[message]) {
+        //}
+        //else {
+        this.emit('chatmessage', channel, userstate.username, message, self);
+        //}
     }
 }
 
 function replaceTextVars(text, username) {
-    text.replace(new RegExp('@user', 'g'), username);
+    stringUtils.replaceAllOccurrences(text, '@user', username);
 }
 
 util.inherits(TwitchChatEmmiter, EventEmitter);
