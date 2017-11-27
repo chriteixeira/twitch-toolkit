@@ -15,3 +15,11 @@ exports.replaceAllOccurrences = (string, searchValue, newValue) => {
     if (newValue == null) throw new Error('newValue parameter is null.');
     return string.replace(new RegExp(searchValue, 'g'), newValue);
 };
+
+exports.iterateObject = (object, callback) => {
+    for (const key in object) {
+        if (object.hasOwnProperty(key)) {
+            callback(object[key], key);
+        }
+    }
+};

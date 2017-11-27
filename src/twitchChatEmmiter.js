@@ -5,101 +5,78 @@ const util = require('util');
 const EventEmitter = require('eventemitter3');
 const tmi = require('tmi.js');
 
-const stringUtils = require('./stringUtils');
+const helpers = require('./helpers');
 
 //var textVars = ['@user'];
 
-function TwitchChatEmmiter() {
+function TwitchChatEmmiter(config) {
     EventEmitter.call(this);
 
-    this.config = {
-        username: process.env.TWITCH_USERNAME,
-        password: process.env.TWITCH_CHAT_PASSWORD,
-        channels: [process.env.TWITCH_CHANNEL],
+    this.config = config || {};
+    this.config.options = config.option || {};
+    this.config.commands = config.commands || {};
+    this.config.text = config.text || {};
+}
+
+TwitchChatEmmiter.prototype.connect = function () {
+    let _this = this;
+    var options = {
         options: {
-            debug: true,
-            reconnect: true,
-            ignoreSelf: true,
+            debug: true
         },
-        commands: {
-            prefix: '!',
-            basic: {
-                'discord': 'abc'
-            },
-            event: ['horario'],
+        connection: {
+            reconnect: true
         },
-        text: {
-            basic: {
-                'maconha': '@user Maconha faz mal, sabia?',
-                'stallonecobra': '@user O que você quer, cretino?'
-            },
-            event: ['']
-        }
+        identity: {
+            username: this.config.username,
+            password: this.config.password
+        },
+        channels: this.config.channels
     };
 
-    _initChatBot();
-}
+    this.client = new tmi.client(options);
 
-function _initChatBot() {
-    try {
-        let _this = this;
-        var options = {
-            options: {
-                debug: true
-            },
-            connection: {
-                reconnect: true
-            },
-            identity: {
-                username: process.env.TWITCH_USERNAME,
-                password: process.env.TWITCH_CHAT_PASSWORD
-            },
-            channels: [process.env.TWITCH_CHANNEL]
-        };
+    // Connect the client to the server..
+    this.client.connect();
 
-        var client = new tmi.client(options);
+    this.client.on('chat', _handleChatMessage.bind(this));
 
-        // Connect the client to the server..
-        client.connect();
+    this.client.on('part', function (channel, username, self) {
+        _this.emit('part', channel, username, self);
+    });
 
-        client.on('chat', function (channel, userstate, message, self) {
-            handleChatMessage(client, channel, userstate, message, self);
-        });
+    this.client.on('join', function (channel, username, self) {
+        _this.emit('join', channel, username, self);
+    });
 
-        client.on('part', function (channel, username, self) {
-            _this.emit('part', channel, username, self);
-        });
+};
 
-        client.on('join', function (channel, username, self) {
-            _this.emit('join', channel, username, self);
-        });
-    } catch (err) {
-        //console.error(err);
-    }
-}
-
-function handleChatMessage(client, channel, userstate, message, self) {
+function _handleChatMessage(channel, userstate, message, self) {
     message = message.trim();
-    if (message.indexOf(client.config.commands.prefix) === 0) {
-        let command = stringUtils.getFirstWord(message);
-        if (client.config.commands.basic[command]) {
-            client.say(channel, replaceTextVars(client.config.commands.basic[command], userstate.username));
+    //Check if its a command or message by looking the prefix
+    if (message.indexOf(this.config.commands.prefix) === 0) {
+        let command = helpers.getFirstWord(message.substring(1));
+        //Check if its a basic command or a event command
+        if (this.config.commands.basic[command]) {
+            this.client.say(channel, replaceTextVars(this.config.commands.basic[command], userstate.username));
         }
         else {
-            client.emit('chatCommand_' + command, channel, userstate.username, command, self);
+            this.client.emit('chatCommand_' + command.toLowerCase(), channel, userstate.username, command, self);
         }
     }
     else {
-        //if (client.config.text.basic[message]) {
-        //}
-        //else {
-        this.emit('chatmessage', channel, userstate.username, message, self);
-        //}
+        //Check if it contais a basic text word and print the message
+        helpers.iterateObject(this.config.text.basic, (item, key) => {
+            if (message.indexOf(key) !== -1) {
+                this.client.say(channel, replaceTextVars(item, userstate.username));
+            }
+        });
+        this.emit('chatMessage', channel, userstate.username, message, self);
     }
 }
 
 function replaceTextVars(text, username) {
-    stringUtils.replaceAllOccurrences(text, '@user', username);
+    return helpers.replaceAllOccurrences(text, '@user', username);
 }
 
 util.inherits(TwitchChatEmmiter, EventEmitter);
