@@ -17,6 +17,7 @@
     "chai": "4.1.2",
     "eslint": "4.11.0",
     "eslint-plugin-mocha": "4.11.0",
+    "jsdoc": "3.5.5",
     "mocha": "4.0.1"
   }
 }
