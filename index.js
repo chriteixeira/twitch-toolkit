@@ -7,8 +7,10 @@ function Twitch(config) {
     this.options = config || {};
 
     let chatOptions = {
+        username: config.username,
         options: {
-            debug: config.options.debug
+            debug: config.options.debug,
+            ignoreSelf: config.options.ignoreSelf
         },
         connection: {
             reconnect: true
@@ -36,7 +38,9 @@ Twitch.prototype.disconnect = async function () {
 
 Twitch.prototype.isLive = async function () {
     try {
-        let data = await this.api.getStreams({ user_login: this.options.username });
+        let data = await this.api.getStreams({
+            user_login: this.options.username
+        });
         return data.length > 0;
     } catch (err) {
         throw err;
@@ -45,7 +49,9 @@ Twitch.prototype.isLive = async function () {
 
 Twitch.prototype.getUser = async function () {
     try {
-        let user = await this.api.getUsers({ login: this.options.username });
+        let user = await this.api.getUsers({
+            login: this.options.username
+        });
         return user[0];
     } catch (err) {
         throw err;
