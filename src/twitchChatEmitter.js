@@ -7,12 +7,13 @@ const helpers = require('./helpers');
 
 //var textVars = ['@user'];
 
-function TwitchChatEmmiter(options) {
+function TwitchChatEmitter(options, logger) {
     tmi.Client.call(this, options);
+    this.log = logger;
     this.on('chat', _handleChatMessage.bind(this));
 }
 
-TwitchChatEmmiter.prototype.connect = function () {
+TwitchChatEmitter.prototype.connect = function () {
     tmi.Client.prototype.connect.call(this);
 };
 
@@ -44,6 +45,6 @@ function replaceTextVars(text, username) {
     return helpers.replaceAllOccurrences(text, '@user', username);
 }
 
-util.inherits(TwitchChatEmmiter, tmi.Client);
+util.inherits(TwitchChatEmitter, tmi.Client);
 
-module.exports = TwitchChatEmmiter;
+module.exports = TwitchChatEmitter;
