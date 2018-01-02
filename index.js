@@ -22,7 +22,8 @@ function Twitch(config) {
             password: config.password
         },
         channels: config.channels,
-        commands: config.commands,
+        chatCommands: config.chatCommands,
+        whisperCommands: config.whisperCommands,
         wordTriggers: config.wordTriggers,
     };
 
