@@ -1,13 +1,33 @@
 {
-  "name": "twitch.tv",
+  "name": "twitch-toolkit",
   "version": "0.0.1",
-  "description": "",
+  "description": "A set of tools to integrate with Twitch API, Twitch Chat and Twitch WebHooks.",
+  "keywords": [
+    "twitch",
+    "twitch.tv",
+    "stream",
+    "chat",
+    "irc",
+    "api",
+    "helix",
+    "bot",
+    "robot",
+    "pubsub",
+    "websub",
+    "toolkit"
+  ],
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Christiano Teixeira",
+  "author": "chriteixeira",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com:chriteixeira/twitch-toolkit.git"
+  },
+  "bugs": {
+    "url": "https://github.com/chriteixeira/twitch-toolkit/issues"
+  },
   "dependencies": {
     "eventemitter3": "2.0.3",
     "request-promise": "4.2.2",
