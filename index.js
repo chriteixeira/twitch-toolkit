@@ -31,15 +31,23 @@ function Twitch(config) {
 }
 
 Twitch.prototype.connect = async function () {
-    this.chat = new twitchChatEmitter(this.chatConfig, this.logger);
-    this.api = new twitchAPI(this.config, this.logger);
-    this.websub = new twitchWebSub(this.config, this.logger);
+    try {
+        this.chat = new twitchChatEmitter(this.chatConfig, this.logger);
+        this.api = new twitchAPI(this.config, this.logger);
+        this.websub = new twitchWebSub(this.config, this.logger);
 
-    await this.chat.connect();
+        await this.chat.connect();
+    } catch (err) {
+        throw err;
+    }
 };
 
 Twitch.prototype.disconnect = async function () {
-    await this.chat.disconnect();
+    try {
+        await this.chat.disconnect();
+    } catch (err) {
+        throw err;
+    }
 };
 
 Twitch.prototype.isLive = async function () {
