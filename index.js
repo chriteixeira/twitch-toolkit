@@ -1,7 +1,7 @@
 'use strict';
 
 const twitchChatEmitter = require('./src/twitchChatEmitter');
-const twitchAPI = require('./src/twitchAPI');
+const twitchAPI = require('./src/twitchApi');
 const twitchWebSub = require('./src/twitchWebSub');
 const logger = require('./src/logger');
 
