@@ -27,7 +27,7 @@ function Twitch(config) {
         wordTriggers: config.wordTriggers,
     };
 
-    this.logger = logger.create();
+    this.logger = (config.logger) ? config.logger : logger.create();
 }
 
 Twitch.prototype.connect = async function () {
