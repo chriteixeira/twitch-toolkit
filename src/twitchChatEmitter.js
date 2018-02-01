@@ -4,6 +4,7 @@ const tmi = require('tmi.js');
 
 const util = require('util');
 const helpers = require('./helpers');
+const request = require('request-promise');
 
 //var textVars = ['@user'];
 
@@ -12,16 +13,28 @@ function TwitchChatEmitter(options, logger) {
     this.log = logger;
     this.on('chat', _handleChatMessage.bind(this));
     this.on('whisper', _handleWhisperMessage.bind(this));
+    this.chatEmotes = null;
 }
 
-TwitchChatEmitter.prototype.connect = function () {
+TwitchChatEmitter.prototype.connect = async function () {
     tmi.Client.prototype.connect.call(this);
+    try {
+        let emotes = await request({
+            url: 'https://twitchemotes.com/api_cache/v3/global.json',
+            method: 'GET'
+        });
+        this.chatEmotes = JSON.parse(emotes);
+    } catch (err) {
+        throw err;
+    }
 };
 
 function _handleChatMessage(channel, userstate, message, self) {
 
     if (!this.getOptions().options.ignoreSelf || (!self && userstate.username.toLowerCase() != this.getOptions().username.toLowerCase())) {
         message = message.trim();
+        let finalMessage = message;
+
         //Check if its a command or message by looking the prefix
         if (message.indexOf(this.getOptions().chatCommands.prefix) === 0) {
             let command = helpers.getFirstWord(message.substring(1));
@@ -32,13 +45,19 @@ function _handleChatMessage(channel, userstate, message, self) {
                 this.emit('chat_cmd_' + command.toLowerCase(), channel, userstate.username, command, self);
             }
         } else {
-            //Check if it contais a basic text word and print the message
-            helpers.iterateObject(this.getOptions().wordTriggers.basic, (item, key) => {
-                if (message.indexOf(key) !== -1) {
-                    this.say(channel, replaceTextVars(item, userstate.username));
+            let words = message.replace(/[^\w\s]/g, '').split(/\W/g);
+            for (let i = 0; i < words.length; i++) {
+                let word = words[i];
+                if (this.getOptions().wordTriggers.basic[word]) {
+                    this.say(channel, replaceTextVars(this.getOptions().wordTriggers.basic[word], userstate.username));
                 }
-            });
+                if (this.chatEmotes[word]) {
+                    let emoteHtml = '<img class="chat-image"  src="' + encodeURI('https://static-cdn.jtvnw.net/emoticons/v1/' + this.chatEmotes[word].id + '/1.0') + '">';
+                    finalMessage = finalMessage.replace(word, emoteHtml);
+                }
+            }
         }
+        this.emit('chat_parsed', channel, userstate, finalMessage, self);
     }
 }
 
