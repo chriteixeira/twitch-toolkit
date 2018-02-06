@@ -9,22 +9,22 @@ function Twitch(config) {
     this.config = config || {};
 
     this.chatConfig = {
-        username: config.username,
+        username: config.chat.username,
         options: {
-            debug: config.options.debug,
-            ignoreSelf: config.options.ignoreSelf
+            debug: config.debug,
+            ignoreSelf: config.chat.ignoreSelf
         },
         connection: {
-            reconnect: true
+            reconnect: config.chat.reconnect
         },
         identity: {
-            username: config.username,
-            password: config.password
+            username: config.chat.username,
+            password: config.chat.password
         },
-        channels: config.channels,
-        chatCommands: config.chatCommands,
-        whisperCommands: config.whisperCommands,
-        wordTriggers: config.wordTriggers,
+        channels: config.chat.channels,
+        chatCommands: config.chat.chatCommands,
+        whisperCommands: config.chat.whisperCommands,
+        wordTriggers: config.chat.wordTriggers,
     };
 
     this.logger = (config.logger) ? config.logger : logger.create();
@@ -52,7 +52,7 @@ Twitch.prototype.disconnect = async function () {
 Twitch.prototype.isLive = async function () {
     try {
         let data = await this.api.getStreams({
-            user_login: this.config.username
+            user_login: this.config.streamName
         });
         return data.length > 0;
     } catch (err) {
@@ -63,7 +63,7 @@ Twitch.prototype.isLive = async function () {
 Twitch.prototype.getBotUser = async function () {
     try {
         let user = await this.api.getUsers({
-            login: this.config.username
+            login: this.config.streamName
         });
         return user[0];
     } catch (err) {
@@ -74,7 +74,7 @@ Twitch.prototype.getBotUser = async function () {
 Twitch.prototype.getStreamUser = async function () {
     try {
         let user = await this.api.getUsers({
-            login: this.config.channel
+            login: this.config.streamName
         });
         return user[0];
     } catch (err) {
