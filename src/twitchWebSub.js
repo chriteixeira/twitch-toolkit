@@ -34,7 +34,6 @@ TwitchWebSub.prototype.topicStreamUpDownSubscribe = async function (streamUserId
     try {
         let topic = API_BASE_URL + '/streams?user_id=' + streamUserId;
         return this.subscribe(topic, cb);
-
     } catch (err) {
         throw err;
     }
@@ -85,14 +84,19 @@ TwitchWebSub.prototype.handleRequest = function (request, response) {
             response.send(request.query['hub.challenge']);
         } else {
             let id = request.query['item.id'];
-            if (id && this.subscribersMap[id] && request.body.data) {
+            if (id && this.subscribersMap[id]) {
                 let item = this.subscribersMap[id];
-                let data = request.body.data;
+                let data = (request.body) ? request.body.data : null;
                 //TODO Validate secret
+                response.sendStatus(200);
                 item.cb(data);
+            } else{
+                response.sendStatus(400);
             }
+            
         }
     } catch (err) {
+        response.sendStatus(500);
         throw err;
     }
 };

@@ -28,14 +28,13 @@ function Twitch(config) {
     };
 
     this.logger = (config.logger) ? config.logger : logger.create();
+    this.chat = new twitchChatEmitter(this.chatConfig, this.logger);
+    this.api = new twitchAPI(this.config, this.logger);
+    this.websub = new twitchWebSub(this.config, this.logger);
 }
 
 Twitch.prototype.connect = async function () {
     try {
-        this.chat = new twitchChatEmitter(this.chatConfig, this.logger);
-        this.api = new twitchAPI(this.config, this.logger);
-        this.websub = new twitchWebSub(this.config, this.logger);
-
         await this.chat.connect();
     } catch (err) {
         throw err;
