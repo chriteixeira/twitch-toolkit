@@ -1,6 +1,6 @@
 {
   "name": "twitch-toolkit",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "A set of tools to integrate with Twitch API, Twitch Chat and Twitch WebHooks.",
   "keywords": [
     "twitch",
@@ -18,7 +18,7 @@
   ],
   "main": "index.js",
   "scripts": {
-    "test": "node_modules/.bin/mocha --exit"
+    "test": "node_modules/.bin/mocha"
   },
   "author": "chriteixeira",
   "license": "MIT",
