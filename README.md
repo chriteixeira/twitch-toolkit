@@ -38,7 +38,7 @@ The config object is described below:
 | client_secret | String              | The Twitch.tv client secret to be used to use the private services.    |
 | chatOptions   | Object              | The chat configuration object    |
 | chatOptions.reconnect | Boolean |  A flag to enable the auto-reconnect mode. `Default: false`    |
-| chatOptions.ignoreSelf | String | A flag to ignore the bots own messages. `Default: false`    |
+| chatOptions.ignoreSelf | Boolean | A flag to ignore the bots own messages. `Default: false`    |
 | chatOptions.username | String | The bot's username.    |
 | chatOptions.password | String | The bot's OAuth Token. You can get it at http://twitchapps.com/tmi/   |
 | chatOptions.channels | Array[String]       | The list os channels the bot will join and listen. |
