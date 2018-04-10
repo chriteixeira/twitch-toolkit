@@ -7,7 +7,7 @@ const twichApi = require('../src/twitchApi');
 
 let config = {
     client_id: process.env.TWITCH_CLIENT_ID,
-    client_secret: process.env.TWITCH_CLIENT_SECRETS
+    client_secret: process.env.TWITCH_CLIENT_SECRET
 };
 
 let api = new twichApi(config);
