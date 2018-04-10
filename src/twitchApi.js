@@ -14,7 +14,7 @@ function TwitchApi(config) {
     this.accessToken = null;
 }
 
-TwitchApi.prototype.auth = async function () {
+TwitchApi.prototype.auth = async function() {
     try {
         var response = await request({
             url: 'https://api.twitch.tv/kraken/oauth2/token',
@@ -23,13 +23,29 @@ TwitchApi.prototype.auth = async function () {
                 client_id: this.config.client_id,
                 client_secret: this.config.client_secret,
                 grant_type: 'client_credentials',
-                scope: 'user:edit user:read:email',
+                scope: 'user:edit user:read:email'
             },
             json: true
         });
 
         this.accessToken = response.access_token;
+        return this.accessToken;
+    } catch (err) {
+        throw err;
+    }
+};
 
+TwitchApi.prototype.authValidateToken = async function(token) {
+    try {
+        var response = await request({
+            url: 'https://id.twitch.tv/oauth2/validate',
+            method: 'GET',
+            headers: {
+                Authorization: 'OAuth ' + token
+            }
+        });
+
+        return response;
     } catch (err) {
         throw err;
     }
@@ -38,13 +54,17 @@ TwitchApi.prototype.auth = async function () {
 /**
  * Gets a Twitch game information by game ID or name. For a query to be valid, name and/or id must be specified.
  * This method requires no authentication.
- * 
+ *
  * @param {object} parameters The parameters to the api call. The parameter object is defined in the Twitch documentation: https://dev.twitch.tv/docs/api/reference#get-games
  * @returns {Promise<Object[]>} The data object in the API response. The response is defined in the Twitch documentation: https://dev.twitch.tv/docs/api/reference#get-games
  */
-TwitchApi.prototype.getGames = async function (parameters) {
+TwitchApi.prototype.getGames = async function(parameters) {
     try {
-        return await performGetRequest(this, 'https://api.twitch.tv/helix/games', parameters);
+        return await performGetRequest(
+            this,
+            'https://api.twitch.tv/helix/games',
+            parameters
+        );
     } catch (err) {
         throw err;
     }
@@ -53,13 +73,17 @@ TwitchApi.prototype.getGames = async function (parameters) {
 /**
  * Gets information about active streams. Streams are returned sorted by number of current viewers, in descending order. Across multiple pages of results, there may be duplicate or missing streams, as viewers join and leave streams.
  * This method requires no authentication.
- * 
+ *
  * @param {object} parameters The parameters to the api call. The parameter object is defined in the Twitch documentation: https://dev.twitch.tv/docs/api/reference#get-streams
  * @returns {Promise<Object[]>} The data object in the API response. The response is defined in the Twitch documentation: https://dev.twitch.tv/docs/api/reference#get-streams
  */
-TwitchApi.prototype.getStreams = async function (options) {
+TwitchApi.prototype.getStreams = async function(options) {
     try {
-        return await performGetRequest(this, 'https://api.twitch.tv/helix/streams', options);
+        return await performGetRequest(
+            this,
+            'https://api.twitch.tv/helix/streams',
+            options
+        );
     } catch (err) {
         throw err;
     }
@@ -67,13 +91,19 @@ TwitchApi.prototype.getStreams = async function (options) {
 
 /**
  * Gets metadata information about active streams playing Overwatch or Hearthstone. Streams are sorted by number of current viewers, in descending order. Across multiple pages of results, there may be duplicate or missing streams, as viewers join and leave streams.
- * 
- * @param {object} parameters The parameters to the api call. The parameter object is defined in the Twitch documentation: https://dev.twitch.tv/docs/api/reference#get-streams-metadata
+ *
+ * @param {string} token The users token.
  * @returns {Promise<Object[]>} The data object in the API response. The response is defined in the Twitch documentation: https://dev.twitch.tv/docs/api/reference#get-streams-metadata
  */
-TwitchApi.prototype.getStreamsMetadata = async function (options) {
+TwitchApi.prototype.getStreamsMetadata = async function(token) {
     try {
-        return await performGetRequest(this, 'https://api.twitch.tv/helix/streams/metadata', options);
+        return await performGetRequest(
+            this,
+            'https://api.twitch.tv/helix/streams/metadata',
+            null,
+            true,
+            token
+        );
     } catch (err) {
         throw err;
     }
@@ -81,15 +111,19 @@ TwitchApi.prototype.getStreamsMetadata = async function (options) {
 
 /**
  * Gets information about one or more specified Twitch users. Users are identified by optional user IDs and/or login name. If neither a user ID nor a login name is specified, the user is looked up by Bearer token.
- * 
+ *
  * @todo add optional scope
- * 
+ *
  * @param {object} parameters The parameters to the api call. The parameter object is defined in the Twitch documentation: https://dev.twitch.tv/docs/api/reference#get-users
  * @returns {Promise<Object[]>} The data object in the API response. The response is defined in the Twitch documentation: https://dev.twitch.tv/docs/api/reference#get-users
  */
-TwitchApi.prototype.getUsers = async function (options) {
+TwitchApi.prototype.getUsers = async function(options) {
     try {
-        return await performGetRequest(this, 'https://api.twitch.tv/helix/users', options);
+        return await performGetRequest(
+            this,
+            'https://api.twitch.tv/helix/users',
+            options
+        );
     } catch (err) {
         throw err;
     }
@@ -98,13 +132,17 @@ TwitchApi.prototype.getUsers = async function (options) {
 /**
  * Gets information on follow relationships between two Twitch users. Information returned is sorted in order, most recent follow first. This can return information like "who is lirik following," "who is following lirik,” or “is user X following user Y.”
  * This method requires no authentication.
- * 
+ *
  * @param {object} parameters The parameters to the api call. The parameter object is defined in the Twitch documentation: https://dev.twitch.tv/docs/api/reference#get-users-follows
  * @returns {Promise<Object[]>} The data object in the API response. The response is defined in the Twitch documentation: https://dev.twitch.tv/docs/api/reference#get-users-follows
  */
-TwitchApi.prototype.getUsersFollows = async function (options) {
+TwitchApi.prototype.getUsersFollows = async function(options) {
     try {
-        return await performGetRequest(this, 'https://api.twitch.tv/helix/users/follows', options);
+        return await performGetRequest(
+            this,
+            'https://api.twitch.tv/helix/users/follows',
+            options
+        );
     } catch (err) {
         throw err;
     }
@@ -113,13 +151,17 @@ TwitchApi.prototype.getUsersFollows = async function (options) {
 /**
  * Gets video information by video ID (one or more), user ID (one only), or game ID (one only).
  * This method requires no authentication.
- * 
+ *
  * @param {object} parameters The parameters to the api call. The parameter object is defined in the Twitch documentation: https://dev.twitch.tv/docs/api/reference#get-videos
  * @returns {Promise<Object[]>} The data object in the API response. The response is defined in the Twitch documentation: https://dev.twitch.tv/docs/api/reference#get-videos
  */
-TwitchApi.prototype.getVideos = async function (options) {
+TwitchApi.prototype.getVideos = async function(options) {
     try {
-        return await performGetRequest(this, 'https://api.twitch.tv/helix/videos', options);
+        return await performGetRequest(
+            this,
+            'https://api.twitch.tv/helix/videos',
+            options
+        );
     } catch (err) {
         throw err;
     }
@@ -128,32 +170,37 @@ TwitchApi.prototype.getVideos = async function (options) {
 /**
  * Updates the description of the authenticated user.
  * This method requires authentication.
- * 
+ *
  * @param {string} description The description to be added to the channel.
  * @returns {Promise<Object[]>} The data object in the API response. The response is defined in the Twitch documentation: https://dev.twitch.tv/docs/api/reference#get-videos
  */
-TwitchApi.prototype.updateUser = async function (description) {
+TwitchApi.prototype.updateUser = async function(description) {
     try {
-        return await performPutRequest(this, 'https://api.twitch.tv/helix/users', { description });
+        return await performPutRequest(
+            this,
+            'https://api.twitch.tv/helix/users',
+            { description }
+        );
     } catch (err) {
         throw err;
     }
 };
 
-
 /**
- * 
+ *
  * @param {object} api The API object.
  * @param {string} url  The request URL.
  * @param {object} qs The query string object with the parameters.
+ * @param {bool} requireAuth Check if the method requires authentication
+ * @param {string} accessToken Check if a special token should be used
  */
-async function performGetRequest(api, url, qs, requireAuth) {
+async function performGetRequest(api, url, qs, requireAuth, accessToken) {
     try {
         let headers = {
             'Client-ID': api.config.client_id
         };
 
-        await validePeformAuth(requireAuth, api, headers);
+        await validePeformAuth(requireAuth, api, headers, accessToken);
 
         var response = await request({
             url: url,
@@ -177,7 +224,7 @@ async function performPutRequest(api, url, body) {
     try {
         let headers = {
             'Client-ID': api.config.client_id,
-            'Content-Type': 'application/x-www-form-urlencoded',
+            'Content-Type': 'application/x-www-form-urlencoded'
         };
 
         await validePeformAuth(true, api, headers);
@@ -200,13 +247,14 @@ async function performPutRequest(api, url, body) {
     }
 }
 
-async function validePeformAuth(requireAuth, api, headers) {
+async function validePeformAuth(requireAuth, api, headers, token) {
     try {
         if (requireAuth) {
             if (!api.config.isAuthenticated) {
                 await api.auth();
             }
-            headers['Authorization'] = 'Bearer ' + api.accessToken;
+            let accessToken = token || api.access_token;
+            headers['Authorization'] = 'Bearer ' + accessToken;
         }
     } catch (err) {
         throw err;

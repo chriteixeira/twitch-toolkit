@@ -6,11 +6,18 @@ const expect = chai.expect; // eslint-disable-line no-unused-vars
 const twichApi = require('../src/twitchApi');
 
 let config = {
-    client_id: 'ezjpxifjp3eafj2mxaqsxxs1vho04e',
-    client_secret: 'cej7vkttb1edsvn1yjk41pdokr5f53'
+    client_id: process.env.TWITCH_CLIENT_ID,
+    client_secret: process.env.TWITCH_CLIENT_SECRETS
 };
 
 let api = new twichApi(config);
+
+describe('twichApi.auth', () => {
+    it('should return a token for authentication', async () => {
+        let result = await api.auth();
+        expect(result).to.be.a('string');
+    });
+});
 
 describe('twichApi.getGames', () => {
     it('should return one game for single parameter', async () => {
@@ -46,8 +53,17 @@ describe('twichApi.getUsers', () => {
     });
 });
 
-
 describe('twichApi.getUsersFollows', () => {
+    it('should return an array with parameters', async () => {
+        let result = await api.getUsersFollows({ to_id: 21800871 });
+        expect(result).to.be.a('array');
+        expect(result).to.not.be.empty;
+        expect(result[0]).to.be.a('object');
+        expect(result[0].to_id).to.be.equal('21800871');
+    });
+});
+
+describe('twichApi.getUser', () => {
     it('should return an array with parameters', async () => {
         let result = await api.getUsersFollows({ to_id: 21800871 });
         expect(result).to.be.a('array');
