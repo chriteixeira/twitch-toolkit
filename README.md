@@ -23,46 +23,49 @@ The library is composed by three modules:
 You can use the toolkit just by creating a new instance with the configuration object:
 
 ```javascript
-const Twitch = require('twitch-toolkit');
+const twitch = require('twitch-toolkit');
 
-let twitch = new Twitch(config);
+var twitch = new Twitch(config);
 ```
 
 The config object is described below:
 
 | Attr          | Type                |  Description    |
 | ------------- | ------------------- | --------------- |
-| logger        | logger object       | The logger instance.    |
-| debug         | Boolean             | A flag to enable the debug mode. `Default: false`    |
-| client_id     | String              | The Twitch.tv client ID to be used to access the services.    |
-| client_secret | String              | The Twitch.tv client secret to be used to use the private services.    |
-| chatOptions   | Object              | The chat configuration object    |
-| chatOptions.reconnect | Boolean |  A flag to enable the auto-reconnect mode. `Default: false`    |
-| chatOptions.ignoreSelf | Boolean | A flag to ignore the bots own messages. `Default: false`    |
-| chatOptions.username | String | The bot's username.    |
-| chatOptions.password | String | The bot's OAuth Token. You can get it at http://twitchapps.com/tmi/   |
-| chatOptions.channels | Array[String]       | The list os channels the bot will join and listen. |
-| chatOptions.chatCommands | Object | The object with the chatCommands, described below   |
-| chatOptions.whisperCommands | Object | The object with the whisperCommands, described below   |
-| chatOptions.wordTriggers | Object | The object with the wordTriggers, described below   |
+| logger        | object            | The logger instance.    |
+| debug         | bool             | A flag to enable the debug mode. `Default: false`    |
+| client_id     | string              | The Twitch.tv client ID to be used to access the services.    |
+| client_secret | string              | The Twitch.tv client secret to be used to use the private services.    |
+| chatOptions   | object              | The chat configuration object    |
+| chatOptions.reconnect | bool |  A flag to enable the auto-reconnect mode. `Default: false`    |
+| chatOptions.ignoreSelf | bool | A flag to ignore the bots own messages. `Default: false`    |
+| chatOptions.username | string | The bot's username.    |
+| chatOptions.password | string | The bot's OAuth Token. You can get it at http://twitchapps.com/tmi/   |
+| chatOptions.channels | array[string]       | The list os channels the bot will join and listen. |
+| chatOptions.chatCommands | object | The object with the chatCommands, described below   |
+| chatOptions.whisperCommands | object | The object with the whisperCommands, described below   |
+| chatOptions.wordTriggers | object | The object with the wordTriggers, described below   |
 
 ### API
 
 The API module will be created with the toolkit object and can be acessed by its name:
 ```javascript
-let twitchAPI = twitch.api;
+var twitchAPI = twitch.api;
 ```
 
 ### Chat
 
-The chat module will be created with the toolkit object and can be acessed by its name:
-```javascript
-let twitchChat = twitch.chat;
-```
-The module will be ready to use but the user won't join the chat until you explicitly connect to it:
+The chat module will be created with the toolkit new instance but, the user will only join and list to the chat when connect is executed: 
 
 ```javascript
+var twitchChat = twitch.chat;
+
 twitch.connect();
+```
+
+After that, you'll be able to listen to channel and chat events. You can also disconnect from the chat, if you wish:
+```javascript
+twitch.disconnect
 ```
 
 #### Chat Commands
