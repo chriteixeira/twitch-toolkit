@@ -45,7 +45,7 @@ TwitchApi.prototype.authValidateToken = async function(token) {
             }
         });
 
-        return response;
+        return JSON.parse(response);
     } catch (err) {
         throw err;
     }

@@ -1,11 +1,14 @@
 'use strict';
 
 const request = require('request-promise');
+const util = require('util');
+const eventemitter = require('eventemitter3');
 const _ = require('./helpers');
 
 const API_BASE_URL = 'https://api.twitch.tv/helix';
 
 function TwitchWebSub(config, logger) {
+    eventemitter.call(this);
     this.config = config;
     this.logger = logger;
 
@@ -13,7 +16,10 @@ function TwitchWebSub(config, logger) {
     this.subscribersMap = {};
 }
 
-TwitchWebSub.prototype.topicUserFollowsSubscribe = async function (fromId, toId, cb) {
+TwitchWebSub.prototype.topicUserFollowsSubscribe = async function(
+    fromId,
+    toId
+) {
     try {
         let topic = API_BASE_URL + '/users/follows?';
         if (fromId && toId) {
@@ -23,29 +29,30 @@ TwitchWebSub.prototype.topicUserFollowsSubscribe = async function (fromId, toId,
         } else if (toId) {
             topic += 'to_id=' + toId;
         }
-        return this.subscribe(topic, cb);
-
+        return this.subscribe(topic, 'user_follows');
     } catch (err) {
         throw err;
     }
 };
 
-TwitchWebSub.prototype.topicStreamUpDownSubscribe = async function (streamUserId, cb) {
+TwitchWebSub.prototype.topicStreamUpDownSubscribe = async function(
+    streamUserId
+) {
     try {
         let topic = API_BASE_URL + '/streams?user_id=' + streamUserId;
-        return this.subscribe(topic, cb);
+        return this.subscribe(topic, 'stream_up_down');
     } catch (err) {
         throw err;
     }
 };
 
-TwitchWebSub.prototype.subscribe = async function (topic, cb) {
+TwitchWebSub.prototype.subscribe = async function(topic, eventName) {
     try {
         this.logger.debug('Subscribing WebSub with topic: ' + topic);
         let item = {
             id: _.uuidv4(),
             topic: topic,
-            cb: cb,
+            eventName: eventName,
             subscribedAt: new Date(),
             secret: _.generateRandomKey()
         };
@@ -62,22 +69,19 @@ TwitchWebSub.prototype.subscribe = async function (topic, cb) {
                 'hub.mode': 'subscribe',
                 'hub.topic': topic,
                 'hub.lease_seconds': 864000,
-                'hub.secret': item.secret,
+                'hub.secret': item.secret
             },
             json: true
         });
 
         this.subscribersMap[item.id] = item;
         return item.id;
-
     } catch (err) {
         throw err;
     }
 };
 
-//TwitchWebSub.prototype.refresh = async function (id) {};
-
-TwitchWebSub.prototype.handleRequest = function (request, response) {
+TwitchWebSub.prototype.handleRequest = function(request, response) {
     try {
         this.logger.debug('Receiving new WebSub request');
         if (request.query['hub.challenge']) {
@@ -86,14 +90,14 @@ TwitchWebSub.prototype.handleRequest = function (request, response) {
             let id = request.query['item.id'];
             if (id && this.subscribersMap[id]) {
                 let item = this.subscribersMap[id];
-                let data = (request.body) ? request.body.data : null;
+                let data = request.body ? request.body.data : null;
+
                 //TODO Validate secret
                 response.sendStatus(200);
-                item.cb(data);
-            } else{
+                this.emit(item.eventName, data);
+            } else {
                 response.sendStatus(400);
             }
-            
         }
     } catch (err) {
         response.sendStatus(500);
@@ -101,7 +105,7 @@ TwitchWebSub.prototype.handleRequest = function (request, response) {
     }
 };
 
-TwitchWebSub.prototype.unsubscribe = async function (id) {
+TwitchWebSub.prototype.unsubscribe = async function(id) {
     try {
         this.logger.debug('Requesting WebSub unsubscription with id: ' + id);
         if (this.subscribersMap[id]) {
@@ -110,10 +114,11 @@ TwitchWebSub.prototype.unsubscribe = async function (id) {
                 url: API_BASE_URL + '/webhooks/hub',
                 method: 'POST',
                 form: {
-                    'hub.callback': this.options.callbackUrl + '?item.id=' + item.id,
+                    'hub.callback':
+                        this.options.callbackUrl + '?item.id=' + item.id,
                     'hub.mode': 'unsubscribe',
                     'hub.topic': item.topic,
-                    'hub.secret': item.secret,
+                    'hub.secret': item.secret
                 },
                 json: true
             });
@@ -126,13 +131,15 @@ TwitchWebSub.prototype.unsubscribe = async function (id) {
     }
 };
 
-TwitchWebSub.prototype.destroy = async function () {
+TwitchWebSub.prototype.destroy = async function() {
     try {
         this.logger.info('Destroying TwitchWebSub...');
         for (const key in this.subscribersMap) {
             if (this.subscribersMap.hasOwnProperty(key)) {
                 let item = this.subscribersMap[key];
-                this.logger.debug('Unsubscribing user with topic: ' + item.topic);
+                this.logger.debug(
+                    'Unsubscribing user with topic: ' + item.topic
+                );
                 await this.unsubscribe(item.id);
             }
         }
@@ -142,4 +149,5 @@ TwitchWebSub.prototype.destroy = async function () {
     }
 };
 
+util.inherits(TwitchWebSub, eventemitter);
 module.exports = TwitchWebSub;
