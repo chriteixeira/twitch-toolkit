@@ -5,6 +5,11 @@ const twitchAPI = require('./src/twitchApi');
 const twitchWebSub = require('./src/twitchWebSub');
 const logger = require('./src/logger');
 
+/**
+ * @class Twitch
+ * Create the toolkit with its modules.
+ * @param {object} config 
+ */
 function Twitch(config) {
     this.config = config || {};
 
@@ -33,6 +38,9 @@ function Twitch(config) {
     this.websub = new twitchWebSub(this.config, this.logger);
 }
 
+/**
+ * Connect to twitch chat.
+ */
 Twitch.prototype.connect = async function () {
     try {
         await this.chat.connect();
@@ -41,6 +49,9 @@ Twitch.prototype.connect = async function () {
     }
 };
 
+/**
+ * Disconnect from the twitch chat.
+ */
 Twitch.prototype.disconnect = async function () {
     try {
         await this.chat.disconnect();
@@ -49,6 +60,10 @@ Twitch.prototype.disconnect = async function () {
     }
 };
 
+/**
+ * Check if the stream is live.
+ * @return {bool} True if the stream is live and false otherwise.
+ */
 Twitch.prototype.isLive = async function () {
     try {
         let data = await this.api.getStreams({
@@ -60,6 +75,10 @@ Twitch.prototype.isLive = async function () {
     }
 };
 
+/**
+ * Get the bot user data.
+ * @return {object} The bot user data object.
+ */
 Twitch.prototype.getBotUser = async function () {
     try {
         let user = await this.api.getUsers({
@@ -71,6 +90,10 @@ Twitch.prototype.getBotUser = async function () {
     }
 };
 
+/**
+ * Get the stream user data.
+ * @return {object} The stream user data object.
+ */
 Twitch.prototype.getStreamUser = async function () {
     try {
         let user = await this.api.getUsers({

@@ -6,8 +6,14 @@ const util = require('util');
 const helpers = require('./helpers');
 const request = require('request-promise');
 
-//var textVars = ['@user'];
 
+/**
+ * @class TwitchChatEmitter
+ * The Twitch chat implementation, based on the already existing module tmi.js (tmijs.org), adding more features and handlers to chat interation. 
+ * 
+ * @param {object} options 
+ * @param {object} logger The logger object.
+ */
 function TwitchChatEmitter(options, logger) {
     tmi.Client.call(this, options);
     this.log = logger;
@@ -16,6 +22,9 @@ function TwitchChatEmitter(options, logger) {
     this.chatEmotes = null;
 }
 
+/**
+ * Connect to the chat.
+ */
 TwitchChatEmitter.prototype.connect = async function () {
     tmi.Client.prototype.connect.call(this);
     try {
@@ -40,7 +49,7 @@ function _handleChatMessage(channel, userstate, message, self) {
             let command = helpers.getFirstWord(message.substring(1));
             //Check if its a basic command or a event command
             if (this.getOptions().chatCommands.basic[command]) {
-                this.say(channel, replaceTextVars(this.getOptions().chatCommands.basic[command], '@' + userstate.username));
+                this.say(channel, _replaceTextVars(this.getOptions().chatCommands.basic[command], '@' + userstate.username));
             } else {
                 this.emit('chat_cmd_' + command.toLowerCase(), channel, userstate.username, command, self);
             }
@@ -49,7 +58,7 @@ function _handleChatMessage(channel, userstate, message, self) {
             for (let i = 0; i < words.length; i++) {
                 let word = words[i];
                 if (this.getOptions().wordTriggers.basic[word]) {
-                    this.say(channel, replaceTextVars(this.getOptions().wordTriggers.basic[word], userstate.username));
+                    this.say(channel, _replaceTextVars(this.getOptions().wordTriggers.basic[word], userstate.username));
                 }
                 if (this.chatEmotes[word]) {
                     let emoteHtml = '<img class="chat-image"  src="' + encodeURI('https://static-cdn.jtvnw.net/emoticons/v1/' + this.chatEmotes[word].id + '/1.0') + '">';
@@ -70,7 +79,7 @@ function _handleWhisperMessage(from, userstate, message, self) {
             let command = helpers.getFirstWord(message.substring(1));
             //Check if its a basic command or a event command
             if (this.getOptions().whisperCommands.basic[command]) {
-                this.whisper(from, replaceTextVars(this.getOptions().whisperCommands.basic[command], '@' + userstate.username));
+                this.whisper(from, _replaceTextVars(this.getOptions().whisperCommands.basic[command], '@' + userstate.username));
             } else {
                 let commandMessage = message.substring(command.length + 2).trim();
                 this.emit('whisper_cmd_' + command.toLowerCase(), userstate, command, commandMessage, self);
@@ -79,7 +88,7 @@ function _handleWhisperMessage(from, userstate, message, self) {
     }
 }
 
-function replaceTextVars(text, username) {
+function _replaceTextVars(text, username) {
     return helpers.replaceAllOccurrences(text, '@user', username);
 }
 
