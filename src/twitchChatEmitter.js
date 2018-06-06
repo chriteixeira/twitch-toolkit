@@ -38,6 +38,14 @@ TwitchChatEmitter.prototype.connect = async function () {
     }
 };
 
+/**
+ * Handle a chat message, firing the specific events.
+ * @private
+ * @param {string} channel The channel in which the message was sent.
+ * @param {object} userstate The userstate object as described in the tmi 'chat 'event.
+ * @param {string} message The chat message.
+ * @param {bool} self Whether is the bot user or not.
+ */
 function _handleChatMessage(channel, userstate, message, self) {
 
     if (!this.getOptions().options.ignoreSelf || (!self && userstate.username.toLowerCase() != this.getOptions().username.toLowerCase())) {
@@ -51,6 +59,14 @@ function _handleChatMessage(channel, userstate, message, self) {
             if (this.getOptions().chatCommands.basic[command]) {
                 this.say(channel, _replaceTextVars(this.getOptions().chatCommands.basic[command], '@' + userstate.username));
             } else {
+                /**
+                 * The chat command event, triggered when the specified command is sent. This event is dynamic and the name will change according to the options passed to the toolkit.
+                 * @event TwitchChatEmitter#Chat:chat_cmd_COMMAND
+                 * @param {string} channel The channel in which the command was sent.
+                 * @param {string} username The name of the user who sent the command.
+                 * @param {string} command The triggered command.
+                 * @param {bool} self Whether the command was sent to the user bot or not.
+                 */
                 this.emit('chat_cmd_' + command.toLowerCase(), channel, userstate.username, command, self);
             }
         } else {
@@ -66,12 +82,27 @@ function _handleChatMessage(channel, userstate, message, self) {
                 }
             }
         }
+        /** 
+         * The chat message parsed to html, with twitch emotes.
+         * @event TwitchChatEmitter#Chat:chat_parsed
+         * @param {string} channel The channel in which the command was sent.
+         * @param {object} userstate The userstate object.
+         * @param {string} message The parsed message.
+         * @param {bool} self Whether the command was sent to the user bot or not.
+         */
         this.emit('chat_parsed', channel, userstate, finalMessage, self);
     }
 }
 
+/**
+ * Handle a whisper message sent to the bot user.
+ * @private
+ * @param {string} from The username who sent the whisper.
+ * @param {object} userstate The userstate object who sent the whisper.
+ * @param {string} message The whispered message.
+ * @param {bool} self Whether the command was sent to the user bot or not.
+ */
 function _handleWhisperMessage(from, userstate, message, self) {
-
     if (!this.getOptions().options.ignoreSelf || (!self && userstate.username.toLowerCase() != this.getOptions().username.toLowerCase())) {
         message = message.trim();
         //Check if its a command or message by looking the prefix
@@ -82,6 +113,14 @@ function _handleWhisperMessage(from, userstate, message, self) {
                 this.whisper(from, _replaceTextVars(this.getOptions().whisperCommands.basic[command], '@' + userstate.username));
             } else {
                 let commandMessage = message.substring(command.length + 2).trim();
+                /**
+                 * The whisper command event, triggered when the specified command is sent. This event is dynamic and the name will change according to the options passed to the toolkit.
+                 * @event TwitchChatEmitter#Chat:whisper_cmd_COMMAND
+                 * @param {string} userstate The userstate object for the user who sent the whisper.
+                 * @param {string} command The triggered command.
+                 * @param {string} commandMessage The message sent with the command.
+                 * @param {bool} self Whether the command was sent to the user bot or not.
+                 */
                 this.emit('whisper_cmd_' + command.toLowerCase(), userstate, command, commandMessage, self);
             }
         }

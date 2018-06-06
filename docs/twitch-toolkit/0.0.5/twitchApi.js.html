@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>twitchApi.js - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Classes</li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="TwitchApi.html">TwitchApi</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="TwitchApi.html#auth">auth</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="TwitchApi.html#getGames">getGames</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="TwitchApi.html#getStreams">getStreams</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="TwitchApi.html#getStreamsMetadata">getStreamsMetadata</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="TwitchApi.html#getUsers">getUsers</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="TwitchApi.html#getUsersFollows">getUsersFollows</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="TwitchApi.html#getVideos">getVideos</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="TwitchApi.html#updateUser">updateUser</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="TwitchChatEmitter.html">TwitchChatEmitter</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="TwitchChatEmitter.html#connect">connect</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="TwitchWebSub.html">TwitchWebSub</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="TwitchWebSub.html#destroy">destroy</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="TwitchWebSub.html#handleRequest">handleRequest</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="TwitchWebSub.html#subscribe">subscribe</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="TwitchWebSub.html#topicStreamUpDownSubscribe">topicStreamUpDownSubscribe</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="TwitchWebSub.html#topicUserFollowsSubscribe">topicUserFollowsSubscribe</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="TwitchWebSub.html#unsubscribe">unsubscribe</a></span></li><li class="nav-heading">Events</li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="TwitchChatEmitter.html#event:Chat:chat_cmd_COMMAND">Chat:chat_cmd_COMMAND</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="TwitchChatEmitter.html#event:Chat:chat_parsed">Chat:chat_parsed</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="TwitchChatEmitter.html#event:Chat:whisper_cmd_COMMAND">Chat:whisper_cmd_COMMAND</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="TwitchWebSub.html#event:WebSub:stream_up_down">WebSub:stream_up_down</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="TwitchWebSub.html#event:WebSub:user_follows">WebSub:user_follows</a></span></li><li class="nav-heading"><a href="global.html">Globals</a></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#_handleChatMessage">_handleChatMessage</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#_handleWhisperMessage">_handleWhisperMessage</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#_performGetRequest">_performGetRequest</a></span></li>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">twitchApi.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>'use strict';
+
+const request = require('request-promise');
+
+/**
+ * Twitch API
+ * @constructor
+ * @param {object} config The configuration object to access the API.
+ * @param {string} config.client_id The client_id to be used to access the API.
+ * @param {string} config.client_secret The secret to be used to access the API that requires login. If this is not provided, the restricted methods will thrown an error.
+ */
+function TwitchApi(config) {
+    this.config = config || {};
+    this.accessToken = null;
+}
+
+
+TwitchApi.prototype.authValidateToken = async function(token) {
+    try {
+        var response = await request({
+            url: 'https://id.twitch.tv/oauth2/validate',
+            method: 'GET',
+            headers: {
+                Authorization: 'OAuth ' + token
+            }
+        });
+
+        return JSON.parse(response);
+    } catch (err) {
+        throw err;
+    }
+};
+
+/**
+ * Gets a Twitch game information by game ID or name. For a query to be valid, name and/or id must be specified.
+ * This method requires no authentication.
+ *
+ * @param {object} options The parameters to the api call. The parameter object is defined in the Twitch documentation: https://dev.twitch.tv/docs/api/reference#get-games
+ * @returns {Promise&lt;Object[]>} The data object in the API response. The response is defined in the Twitch documentation: https://dev.twitch.tv/docs/api/reference#get-games
+ */
+TwitchApi.prototype.getGames = async function(options) {
+    try {
+        return await _performGetRequest(
+            this,
+            'https://api.twitch.tv/helix/games',
+            options
+        );
+    } catch (err) {
+        throw err;
+    }
+};
+
+/**
+ * Gets information about active streams. Streams are returned sorted by number of current viewers, in descending order. Across multiple pages of results, there may be duplicate or missing streams, as viewers join and leave streams.
+ * This method requires no authentication.
+ *
+ * @param {object} options The parameters to the api call. The parameter object is defined in the Twitch documentation: https://dev.twitch.tv/docs/api/reference#get-streams
+ * @returns {Promise&lt;Object[]>} The data object in the API response. The response is defined in the Twitch documentation: https://dev.twitch.tv/docs/api/reference#get-streams
+ */
+TwitchApi.prototype.getStreams = async function(options) {
+    try {
+        return await _performGetRequest(
+            this,
+            'https://api.twitch.tv/helix/streams',
+            options
+        );
+    } catch (err) {
+        throw err;
+    }
+};
+
+/**
+ * Gets metadata information about active streams playing Overwatch or Hearthstone. Streams are sorted by number of current viewers, in descending order. Across multiple pages of results, there may be duplicate or missing streams, as viewers join and leave streams.
+ *
+ * @param {string} token The users token.
+ * @returns {Promise&lt;Object[]>} The data object in the API response. The response is defined in the Twitch documentation: https://dev.twitch.tv/docs/api/reference#get-streams-metadata
+ */
+TwitchApi.prototype.getStreamsMetadata = async function(token) {
+    try {
+        return await _performGetRequest(
+            this,
+            'https://api.twitch.tv/helix/streams/metadata',
+            null,
+            true,
+            token
+        );
+    } catch (err) {
+        throw err;
+    }
+};
+
+/**
+ * Gets information about one or more specified Twitch users. Users are identified by optional user IDs and/or login name. If neither a user ID nor a login name is specified, the user is looked up by Bearer token.
+ *
+ * @todo add optional scope
+ *
+ * @param {object} options The parameters to the api call. The parameter object is defined in the Twitch documentation: https://dev.twitch.tv/docs/api/reference#get-users
+ * @returns {Promise&lt;Object[]>} The data object in the API response. The response is defined in the Twitch documentation: https://dev.twitch.tv/docs/api/reference#get-users
+ */
+TwitchApi.prototype.getUsers = async function(options) {
+    try {
+        return await _performGetRequest(
+            this,
+            'https://api.twitch.tv/helix/users',
+            options
+        );
+    } catch (err) {
+        throw err;
+    }
+};
+
+/**
+ * Gets information on follow relationships between two Twitch users. Information returned is sorted in order, most recent follow first. This can return information like "who is lirik following," "who is following lirik,” or “is user X following user Y.”
+ * This method requires no authentication.
+ *
+ * @param {object} options The parameters to the api call. The parameter object is defined in the Twitch documentation: https://dev.twitch.tv/docs/api/reference#get-users-follows
+ * @returns {Promise&lt;Object[]>} The data object in the API response. The response is defined in the Twitch documentation: https://dev.twitch.tv/docs/api/reference#get-users-follows
+ */
+TwitchApi.prototype.getUsersFollows = async function(options) {
+    try {
+        return await _performGetRequest(
+            this,
+            'https://api.twitch.tv/helix/users/follows',
+            options
+        );
+    } catch (err) {
+        throw err;
+    }
+};
+
+/**
+ * Gets video information by video ID (one or more), user ID (one only), or game ID (one only).
+ * This method requires no authentication.
+ *
+ * @param {object} options The parameters to the api call. The parameter object is defined in the Twitch documentation: https://dev.twitch.tv/docs/api/reference#get-videos
+ * @returns {Promise&lt;Object[]>} The data object in the API response. The response is defined in the Twitch documentation: https://dev.twitch.tv/docs/api/reference#get-videos
+ */
+TwitchApi.prototype.getVideos = async function(options) {
+    try {
+        return await _performGetRequest(
+            this,
+            'https://api.twitch.tv/helix/videos',
+            options
+        );
+    } catch (err) {
+        throw err;
+    }
+};
+
+/**
+ * Updates the description of the authenticated user.
+ * This method requires authentication.
+ *
+ * @param {string} description The description to be added to the channel.
+ * @returns {Promise&lt;Object[]>} The data object in the API response. The response is defined in the Twitch documentation: https://dev.twitch.tv/docs/api/reference#get-videos
+ */
+TwitchApi.prototype.updateUser = async function(description) {
+    try {
+        return await _performPutRequest(
+            this,
+            'https://api.twitch.tv/helix/users',
+            { description }
+        );
+    } catch (err) {
+        throw err;
+    }
+};
+
+/**
+ * Authenticate the current user and get the access token to be used in the private calls.
+ * @return The access token.
+ */
+TwitchApi.prototype.auth = async function() {
+    try {
+        var response = await request({
+            url: 'https://api.twitch.tv/kraken/oauth2/token',
+            method: 'POST',
+            form: {
+                client_id: this.config.client_id,
+                client_secret: this.config.client_secret,
+                grant_type: 'client_credentials',
+                scope: 'user:edit user:read:email'
+            },
+            json: true
+        });
+
+        this.accessToken = response.access_token;
+        return this.accessToken;
+    } catch (err) {
+        throw err;
+    }
+};
+
+/**
+ * @private
+ * Perform the get request
+ * @param {object} api The API object.
+ * @param {string} url  The request URL.
+ * @param {object} qs The query string object with the parameters.
+ * @param {bool} requireAuth Check if the method requires authentication
+ * @param {string} accessToken Check if a special token should be used
+ */
+async function _performGetRequest(api, url, qs, requireAuth, accessToken) {
+    try {
+        let headers = {
+            'Client-ID': api.config.client_id
+        };
+
+        await validePerformAuth(requireAuth, api, headers, accessToken);
+
+        var response = await request({
+            url: url,
+            method: 'GET',
+            headers: headers,
+            qs: qs,
+            json: true
+        });
+
+        if (!response || !response.data) {
+            return [];
+        } else {
+            return response.data;
+        }
+    } catch (err) {
+        throw err;
+    }
+}
+
+async function _performPutRequest(api, url, body) {
+    try {
+        let headers = {
+            'Client-ID': api.config.client_id,
+            'Content-Type': 'application/x-www-form-urlencoded'
+        };
+
+        await validePerformAuth(true, api, headers);
+
+        var response = await request({
+            url: url,
+            method: 'PUT',
+            headers: headers,
+            body: body,
+            json: true
+        });
+
+        if (response.data &amp;&amp; response.data.length > 0) {
+            return null;
+        } else {
+            return response;
+        }
+    } catch (err) {
+        throw err;
+    }
+}
+
+async function validePerformAuth(requireAuth, api, headers, token) {
+    try {
+        if (requireAuth) {
+            if (!api.config.isAuthenticated) {
+                await api._auth();
+            }
+            let accessToken = token || api.access_token;
+            headers['Authorization'] = 'Bearer ' + accessToken;
+        }
+    } catch (err) {
+        throw err;
+    }
+}
+
+module.exports = TwitchApi;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Tue Jun 05 2018 21:36:18 GMT-0300 (E. South America Standard Time) using the Minami theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>

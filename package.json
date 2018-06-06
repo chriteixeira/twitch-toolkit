@@ -1,7 +1,8 @@
 {
   "name": "twitch-toolkit",
   "version": "0.0.5",
-  "description": "A set of tools to integrate with Twitch API, Twitch Chat and Twitch WebHooks.",
+  "description":
+    "A set of tools to integrate with Twitch API, Twitch Chat and Twitch WebHooks.",
   "keywords": [
     "twitch",
     "twitch.tv",
@@ -18,7 +19,8 @@
   ],
   "main": "index.js",
   "scripts": {
-    "test": "node_modules/.bin/mocha"
+    "test": "node_modules/.bin/mocha",
+    "generate-docs": "node_modules/.bin/jsdoc --configure .jsdoc.json --verbose"
   },
   "author": "chriteixeira",
   "license": "MIT",
@@ -37,11 +39,10 @@
   },
   "devDependencies": {
     "chai": "4.1.2",
-    "esdoc": "1.1.0",
-    "esdoc-standard-plugin": "1.0.0",
     "eslint": "4.17.0",
     "eslint-plugin-mocha": "4.11.0",
     "jsdoc": "3.5.5",
+    "minami": "1.2.3",
     "mocha": "3.0.0"
   }
 }

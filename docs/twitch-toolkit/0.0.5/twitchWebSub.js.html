@@ -1,4 +1,45 @@
-'use strict';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>twitchWebSub.js - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Classes</li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="TwitchApi.html">TwitchApi</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="TwitchApi.html#auth">auth</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="TwitchApi.html#getGames">getGames</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="TwitchApi.html#getStreams">getStreams</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="TwitchApi.html#getStreamsMetadata">getStreamsMetadata</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="TwitchApi.html#getUsers">getUsers</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="TwitchApi.html#getUsersFollows">getUsersFollows</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="TwitchApi.html#getVideos">getVideos</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="TwitchApi.html#updateUser">updateUser</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="TwitchChatEmitter.html">TwitchChatEmitter</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="TwitchChatEmitter.html#connect">connect</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="TwitchWebSub.html">TwitchWebSub</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="TwitchWebSub.html#destroy">destroy</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="TwitchWebSub.html#handleRequest">handleRequest</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="TwitchWebSub.html#subscribe">subscribe</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="TwitchWebSub.html#topicStreamUpDownSubscribe">topicStreamUpDownSubscribe</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="TwitchWebSub.html#topicUserFollowsSubscribe">topicUserFollowsSubscribe</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="TwitchWebSub.html#unsubscribe">unsubscribe</a></span></li><li class="nav-heading">Events</li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="TwitchChatEmitter.html#event:Chat:chat_cmd_COMMAND">Chat:chat_cmd_COMMAND</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="TwitchChatEmitter.html#event:Chat:chat_parsed">Chat:chat_parsed</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="TwitchChatEmitter.html#event:Chat:whisper_cmd_COMMAND">Chat:whisper_cmd_COMMAND</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="TwitchWebSub.html#event:WebSub:stream_up_down">WebSub:stream_up_down</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="TwitchWebSub.html#event:WebSub:user_follows">WebSub:user_follows</a></span></li><li class="nav-heading"><a href="global.html">Globals</a></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#_handleChatMessage">_handleChatMessage</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#_handleWhisperMessage">_handleWhisperMessage</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#_performGetRequest">_performGetRequest</a></span></li>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">twitchWebSub.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>'use strict';
 
 const request = require('request-promise');
 const util = require('util');
@@ -47,9 +88,9 @@ TwitchWebSub.prototype.topicUserFollowsSubscribe = async function(
     try {
         let topic = API_BASE_URL + '/users/follows?first=1';
         if (fromId) {
-            topic += '&from_id=' + fromId;
+            topic += '&amp;from_id=' + fromId;
         } else if (toId) {
-            topic += '&to_id=' + toId;
+            topic += '&amp;to_id=' + toId;
         }
         return this.subscribe(topic, 'user_follows');
     } catch (err) {
@@ -136,7 +177,7 @@ TwitchWebSub.prototype.handleRequest = function(request, response) {
             response.send(request.query['hub.challenge']);
         } else {
             let id = request.query['item.id'];
-            if (id && this.subscribersMap[id]) {
+            if (id &amp;&amp; this.subscribersMap[id]) {
                 let item = this.subscribersMap[id];
                 let data = request.body ? request.body.data : null;
 
@@ -211,3 +252,22 @@ TwitchWebSub.prototype.destroy = async function() {
 
 util.inherits(TwitchWebSub, eventemitter);
 module.exports = TwitchWebSub;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Tue Jun 05 2018 21:36:18 GMT-0300 (E. South America Standard Time) using the Minami theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>
