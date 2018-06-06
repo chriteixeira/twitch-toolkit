@@ -52,6 +52,7 @@ The API module will be created with the toolkit object and can be acessed by its
 ```javascript
 var twitchAPI = twitch.api;
 ```
+The methods are described in the [TwitchApi documentation page](https://chriteixeira.github.io/twitch-toolkit/0.0.6/TwitchApi.html)
 
 ### Chat
 
@@ -68,8 +69,20 @@ After that, you'll be able to listen to channel and chat events. You can also di
 twitch.disconnect
 ```
 
-#### Chat Commands
-#### Whisper Commands
-#### Word Triggers
+The methods and events are described in the [TwitchChatEmitter documentation page](https://chriteixeira.github.io/twitch-toolkit/0.0.6/TwitchChatEmitter.html)
 
-### WebSub
+
+### Webhooks
+
+The Twitch Webhooks implementation, as described in https://dev.twitch.tv/docs/api/webhooks-guide/ .
+
+To access the Webhook module:
+
+The API module will be created with the toolkit object and can be acessed by its name:
+```javascript
+var twitchWebSub = twitch.websub;
+```
+
+The Webhook/WebSub requires a public endpoint on the running express server/application to receive the data from the hub. Without this, its impossible to make this work.
+
+The methods and events are described in the [TwitchWebSub documentation page](https://chriteixeira.github.io/twitch-toolkit/0.0.6/TwitchWebSub.html)
