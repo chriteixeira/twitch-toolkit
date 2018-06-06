@@ -2,9 +2,11 @@
 [![License](http://img.shields.io/:license-mit-blue.svg?style=flat)](http://doge.mit-license.org)
 [![Build Status](https://travis-ci.org/chriteixeira/twitch-toolkit.svg?branch=master)](https://travis-ci.org/chriteixeira/twitch-toolkit)
 
-A set of tools to integrate with Twitch API, Twitch Chat and Twitch WebHooks.
+A set of tools to integrate with Twitch API, Twitch Chat and Twitch WebHooks. 
 
 [![NPM](https://nodei.co/npm/twitch-toolkit.png?downloads=true&downloadRank=true)](https://nodei.co/npm/twitch-toolkit/)
+
+To start to use this module, check the [project documentation](https://chriteixeira.github.io/twitch-toolkit/0.0.6/)
 
 ## Installation
 
