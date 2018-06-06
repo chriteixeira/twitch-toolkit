@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Home - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Classes</li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="TwitchApi.html">TwitchApi</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="TwitchApi.html#auth">auth</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="TwitchApi.html#getGames">getGames</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="TwitchApi.html#getStreams">getStreams</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="TwitchApi.html#getStreamsMetadata">getStreamsMetadata</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="TwitchApi.html#getUsers">getUsers</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="TwitchApi.html#getUsersFollows">getUsersFollows</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="TwitchApi.html#getVideos">getVideos</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="TwitchApi.html#updateUser">updateUser</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="TwitchChatEmitter.html">TwitchChatEmitter</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="TwitchChatEmitter.html#connect">connect</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="TwitchWebSub.html">TwitchWebSub</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="TwitchWebSub.html#destroy">destroy</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="TwitchWebSub.html#subscribe">subscribe</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="TwitchWebSub.html#topicStreamUpDownSubscribe">topicStreamUpDownSubscribe</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="TwitchWebSub.html#topicUserFollowsSubscribe">topicUserFollowsSubscribe</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="TwitchWebSub.html#unsubscribe">unsubscribe</a></span></li><li class="nav-heading">Events</li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="TwitchChatEmitter.html#event:Chat:chat_cmd_COMMAND">Chat:chat_cmd_COMMAND</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="TwitchChatEmitter.html#event:Chat:chat_parsed">Chat:chat_parsed</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="TwitchChatEmitter.html#event:Chat:whisper_cmd_COMMAND">Chat:whisper_cmd_COMMAND</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="TwitchWebSub.html#event:WebSub:stream_up_down">WebSub:stream_up_down</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="TwitchWebSub.html#event:WebSub:user_follows">WebSub:user_follows</a></span></li>
+</nav>
+
+<div id="main">
+    
+
+    
+
+
+
+    
+
+
+
+
+
+
+
+
+
+    
+
+
+    <section class="readme">
+        <article><h1>twitch-toolkit</h1><p><a href="http://doge.mit-license.org"><img src="http://img.shields.io/:license-mit-blue.svg?style=flat" alt="License"></a>
+<a href="https://travis-ci.org/chriteixeira/twitch-toolkit"><img src="https://travis-ci.org/chriteixeira/twitch-toolkit.svg?branch=master" alt="Build Status"></a></p>
+<p>A set of tools to integrate with Twitch API, Twitch Chat and Twitch WebHooks.</p>
+<p><a href="https://nodei.co/npm/twitch-toolkit/"><img src="https://nodei.co/npm/twitch-toolkit.png?downloads=true&amp;downloadRank=true" alt="NPM"></a></p>
+<h2>Installation</h2><p>Using npm:</p>
+<pre class="prettyprint source lang-shell"><code>$ npm i --save twitch-toolkit</code></pre><h2>Usage</h2><p>The library is composed by three modules:</p>
+<ul>
+<li><strong>api</strong>: Provides access to the Helix API.</li>
+<li><strong>chat</strong>: Provides access to the chat events through <a href="https://github.com/tmijs">tmi.js</a> .</li>
+<li><strong>websub</strong>: Provides access to the websubs topics and events.</li>
+</ul>
+<p>You can use the toolkit just by creating a new instance with the configuration object:</p>
+<pre class="prettyprint source lang-javascript"><code>const twitch = require('twitch-toolkit');
+
+var twitch = new Twitch(config);</code></pre><p>The config object is described below:</p>
+<table>
+<thead>
+<tr>
+<th>Attr</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>logger</td>
+<td>object</td>
+<td>The logger instance.</td>
+</tr>
+<tr>
+<td>debug</td>
+<td>bool</td>
+<td>A flag to enable the debug mode. <code>Default: false</code></td>
+</tr>
+<tr>
+<td>client_id</td>
+<td>string</td>
+<td>The Twitch.tv client ID to be used to access the services.</td>
+</tr>
+<tr>
+<td>client_secret</td>
+<td>string</td>
+<td>The Twitch.tv client secret to be used to use the private services.</td>
+</tr>
+<tr>
+<td>chatOptions</td>
+<td>object</td>
+<td>The chat configuration object</td>
+</tr>
+<tr>
+<td>chatOptions.reconnect</td>
+<td>bool</td>
+<td>A flag to enable the auto-reconnect mode. <code>Default: false</code></td>
+</tr>
+<tr>
+<td>chatOptions.ignoreSelf</td>
+<td>bool</td>
+<td>A flag to ignore the bots own messages. <code>Default: false</code></td>
+</tr>
+<tr>
+<td>chatOptions.username</td>
+<td>string</td>
+<td>The bot's username.</td>
+</tr>
+<tr>
+<td>chatOptions.password</td>
+<td>string</td>
+<td>The bot's OAuth Token. You can get it at http://twitchapps.com/tmi/</td>
+</tr>
+<tr>
+<td>chatOptions.channels</td>
+<td>array[string]</td>
+<td>The list os channels the bot will join and listen.</td>
+</tr>
+<tr>
+<td>chatOptions.chatCommands</td>
+<td>object</td>
+<td>The object with the chatCommands, described below</td>
+</tr>
+<tr>
+<td>chatOptions.whisperCommands</td>
+<td>object</td>
+<td>The object with the whisperCommands, described below</td>
+</tr>
+<tr>
+<td>chatOptions.wordTriggers</td>
+<td>object</td>
+<td>The object with the wordTriggers, described below</td>
+</tr>
+</tbody>
+</table>
+<h3>API</h3><p>The API module will be created with the toolkit object and can be acessed by its name:</p>
+<pre class="prettyprint source lang-javascript"><code>var twitchAPI = twitch.api;</code></pre><h3>Chat</h3><p>The chat module will be created with the toolkit new instance but, the user will only join and list to the chat when connect is executed: </p>
+<pre class="prettyprint source lang-javascript"><code>var twitchChat = twitch.chat;
+
+twitch.connect();</code></pre><p>After that, you'll be able to listen to channel and chat events. You can also disconnect from the chat, if you wish:</p>
+<pre class="prettyprint source lang-javascript"><code>twitch.disconnect</code></pre><h4>Chat Commands</h4><h4>Whisper Commands</h4><h4>Word Triggers</h4><h3>WebSub</h3></article>
+    </section>
+
+
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Tue Jun 05 2018 22:16:31 GMT-0300 (E. South America Standard Time) using the Minami theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>
