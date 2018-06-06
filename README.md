@@ -68,7 +68,7 @@ twitch.connect();
 
 After that, you'll be able to listen to channel and chat events. You can also disconnect from the chat, if you wish:
 ```javascript
-twitch.disconnect
+twitch.disconnect()
 ```
 
 The methods and events are described in the [TwitchChatEmitter documentation page](https://chriteixeira.github.io/twitch-toolkit/0.0.6/TwitchChatEmitter.html)
