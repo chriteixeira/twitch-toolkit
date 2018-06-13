@@ -14,8 +14,12 @@ function TwitchApi(config) {
     this.accessToken = null;
 }
 
-
-TwitchApi.prototype.authValidateToken = async function(token) {
+/**
+ * Validate the access token to make sure it is still valid.
+ * @param {string} token The token to be validated
+ * @returns {Promise<Object[]>} The data object in the API response. The response is defined in the Twitch documentation: https://dev.twitch.tv/docs/authentication/#validating-requests
+ */
+TwitchApi.prototype.validateAccessToken = async function(token) {
     try {
         var response = await request({
             url: 'https://id.twitch.tv/oauth2/validate',
@@ -41,8 +45,8 @@ TwitchApi.prototype.authValidateToken = async function(token) {
 TwitchApi.prototype.getGames = async function(options) {
     try {
         return await _performGetRequest(
-            this,
             'https://api.twitch.tv/helix/games',
+            this.config.client_id,
             options
         );
     } catch (err) {
@@ -60,8 +64,8 @@ TwitchApi.prototype.getGames = async function(options) {
 TwitchApi.prototype.getStreams = async function(options) {
     try {
         return await _performGetRequest(
-            this,
             'https://api.twitch.tv/helix/streams',
+            this.config.client_id,
             options
         );
     } catch (err) {
@@ -75,14 +79,13 @@ TwitchApi.prototype.getStreams = async function(options) {
  * @param {string} token The users token.
  * @returns {Promise<Object[]>} The data object in the API response. The response is defined in the Twitch documentation: https://dev.twitch.tv/docs/api/reference#get-streams-metadata
  */
-TwitchApi.prototype.getStreamsMetadata = async function(token) {
+TwitchApi.prototype.getStreamsMetadata = async function() {
     try {
         return await _performGetRequest(
-            this,
             'https://api.twitch.tv/helix/streams/metadata',
+            this.config.client_id,
             null,
-            true,
-            token
+            this.getAccessToken()
         );
     } catch (err) {
         throw err;
@@ -100,8 +103,8 @@ TwitchApi.prototype.getStreamsMetadata = async function(token) {
 TwitchApi.prototype.getUsers = async function(options) {
     try {
         return await _performGetRequest(
-            this,
             'https://api.twitch.tv/helix/users',
+            this.config.client_id,
             options
         );
     } catch (err) {
@@ -119,8 +122,8 @@ TwitchApi.prototype.getUsers = async function(options) {
 TwitchApi.prototype.getUsersFollows = async function(options) {
     try {
         return await _performGetRequest(
-            this,
             'https://api.twitch.tv/helix/users/follows',
+            this.config.client_id,
             options
         );
     } catch (err) {
@@ -138,8 +141,8 @@ TwitchApi.prototype.getUsersFollows = async function(options) {
 TwitchApi.prototype.getVideos = async function(options) {
     try {
         return await _performGetRequest(
-            this,
             'https://api.twitch.tv/helix/videos',
+            this.config.client_id,
             options
         );
     } catch (err) {
@@ -157,8 +160,8 @@ TwitchApi.prototype.getVideos = async function(options) {
 TwitchApi.prototype.updateUser = async function(description) {
     try {
         return await _performPutRequest(
-            this,
             'https://api.twitch.tv/helix/users',
+            this.config.client_id,
             { description }
         );
     } catch (err) {
@@ -170,21 +173,23 @@ TwitchApi.prototype.updateUser = async function(description) {
  * Authenticate the current user and get the access token to be used in the private calls.
  * @return The access token.
  */
-TwitchApi.prototype.auth = async function() {
+TwitchApi.prototype.getAccessToken = async function() {
     try {
-        var response = await request({
-            url: 'https://api.twitch.tv/kraken/oauth2/token',
-            method: 'POST',
-            form: {
-                client_id: this.config.client_id,
-                client_secret: this.config.client_secret,
-                grant_type: 'client_credentials',
-                scope: 'user:edit user:read:email'
-            },
-            json: true
-        });
+        if (!this.accessToken) {
+            var response = await request({
+                url: 'https://id.twitch.tv/oauth2/token',
+                method: 'POST',
+                form: {
+                    client_id: this.config.client_id,
+                    client_secret: this.config.client_secret,
+                    grant_type: 'client_credentials',
+                    scope: 'user:edit user:read:email'
+                },
+                json: true
+            });
 
-        this.accessToken = response.access_token;
+            this.accessToken = response.access_token;
+        }
         return this.accessToken;
     } catch (err) {
         throw err;
@@ -200,14 +205,14 @@ TwitchApi.prototype.auth = async function() {
  * @param {bool} requireAuth Check if the method requires authentication
  * @param {string} accessToken Check if a special token should be used
  */
-async function _performGetRequest(api, url, qs, requireAuth, accessToken) {
+async function _performGetRequest(url, client_id, qs, accessToken) {
     try {
         let headers = {
-            'Client-ID': api.config.client_id
+            'Client-ID': client_id
         };
-
-        await validePerformAuth(requireAuth, api, headers, accessToken);
-
+        if (accessToken) {
+            headers['Authorization'] = 'Bearer ' + accessToken;
+        }
         var response = await request({
             url: url,
             method: 'GET',
@@ -226,14 +231,21 @@ async function _performGetRequest(api, url, qs, requireAuth, accessToken) {
     }
 }
 
-async function _performPutRequest(api, url, body) {
+/**
+ * @private
+ * @param {*} api
+ * @param {*} url
+ * @param {*} body
+ */
+async function _performPutRequest(url, client_id, body, accessToken) {
     try {
         let headers = {
-            'Client-ID': api.config.client_id,
+            'Client-ID': client_id,
             'Content-Type': 'application/x-www-form-urlencoded'
         };
-
-        await validePerformAuth(true, api, headers);
+        if (accessToken) {
+            headers['Authorization'] = 'Bearer ' + accessToken;
+        }
 
         var response = await request({
             url: url,
@@ -253,18 +265,11 @@ async function _performPutRequest(api, url, body) {
     }
 }
 
-async function validePerformAuth(requireAuth, api, headers, token) {
-    try {
-        if (requireAuth) {
-            if (!api.config.isAuthenticated) {
-                await api._auth();
-            }
-            let accessToken = token || api.access_token;
-            headers['Authorization'] = 'Bearer ' + accessToken;
-        }
-    } catch (err) {
-        throw err;
-    }
+/* test code */
+if (process.env.NODE_ENV === 'test') {
+    TwitchApi.prototype._performGetRequest = _performGetRequest;
+    TwitchApi.prototype._performPutRequest = _performPutRequest;
 }
+/* end-test code */
 
 module.exports = TwitchApi;
