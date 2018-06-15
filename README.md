@@ -6,8 +6,8 @@ A set of tools to integrate with Twitch API, Twitch Chat and Twitch WebHooks.
 
 [![NPM](https://nodei.co/npm/twitch-toolkit.png?downloads=true&downloadRank=true)](https://nodei.co/npm/twitch-toolkit/)
 
-To start to use this module, check the [project documentation](https://chriteixeira.github.io/twitch-toolkit/0.0.6/)
-
+To start to use this module, check the [project documentation](https://chriteixeira.github.io/twitch-toolkit/latest/). 
+la
 ## Installation
 
 Using npm:
@@ -54,7 +54,7 @@ The API module will be created with the toolkit object and can be acessed by its
 ```javascript
 var twitchAPI = twitch.api;
 ```
-The methods are described in the [TwitchApi documentation page](https://chriteixeira.github.io/twitch-toolkit/0.0.6/TwitchApi.html)
+The methods are described in the [TwitchApi documentation page](https://chriteixeira.github.io/twitch-toolkit/latest/TwitchApi.html)
 
 ### Chat
 
@@ -71,7 +71,7 @@ After that, you'll be able to listen to channel and chat events. You can also di
 twitch.disconnect()
 ```
 
-The methods and events are described in the [TwitchChatEmitter documentation page](https://chriteixeira.github.io/twitch-toolkit/0.0.6/TwitchChatEmitter.html)
+The methods and events are described in the [TwitchChatEmitter documentation page](https://chriteixeira.github.io/twitch-toolkit/latest/TwitchChatEmitter.html)
 
 
 ### Webhooks
@@ -87,7 +87,7 @@ var twitchWebSub = twitch.websub;
 
 The Webhook/WebSub requires a public endpoint on the running express server/application to receive the data from the hub. Without this, its impossible to make this work.
 
-The methods and events are described in the [TwitchWebSub documentation page](https://chriteixeira.github.io/twitch-toolkit/0.0.6/TwitchWebSub.html)
+The methods and events are described in the [TwitchWebSub documentation page](https://chriteixeira.github.io/twitch-toolkit/latest/TwitchWebSub.html)
 
 ## Tests
 
