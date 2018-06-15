@@ -88,3 +88,32 @@ var twitchWebSub = twitch.websub;
 The Webhook/WebSub requires a public endpoint on the running express server/application to receive the data from the hub. Without this, its impossible to make this work.
 
 The methods and events are described in the [TwitchWebSub documentation page](https://chriteixeira.github.io/twitch-toolkit/0.0.6/TwitchWebSub.html)
+
+## Tests
+
+The module uses [Mocha](https://mochajs.org/) with [Chai](http://www.chaijs.com/) for unit tests and [Istanbul](https://istanbul.js.org/) for test coverage reports.
+
+To run the mocha tests:
+
+```shell
+$ npm run test
+```
+
+To run the tests with the coverage report:
+
+```shell
+$ npm run test:coverage
+```
+
+To properly run the tests, the following Environment Variables must be set:
+
+| Var Name      |  Value          |
+| ------------- |---------------- |
+| TWITCH_CLIENT_ID | The Client-ID to be used to make the API calls. |
+| TWITCH_CLIENT_SECRET | The Client Secret to be used to make the API calls. |
+| TWITCH_CLIENT_USERNAME | The Username related to the Client-ID |
+| TWITCH_CLIENT_PASSWORD | The OAUTH password. It can be generated [here](https://twitchapps.com/tmi/). |
+
+## License
+
+Licensed under the [MIT](https://github.com/chriteixeira/twitch-toolkit/blob/master/LICENSE) License.
