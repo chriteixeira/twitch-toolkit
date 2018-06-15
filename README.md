@@ -7,7 +7,7 @@ A set of tools to integrate with Twitch API, Twitch Chat and Twitch WebHooks.
 [![NPM](https://nodei.co/npm/twitch-toolkit.png?downloads=true&downloadRank=true)](https://nodei.co/npm/twitch-toolkit/)
 
 To start to use this module, check the [project documentation](https://chriteixeira.github.io/twitch-toolkit/latest/). 
-la
+
 ## Installation
 
 Using npm:
