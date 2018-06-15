@@ -41,33 +41,36 @@ describe('twichApi.getGames', function() {
         });
     });
 });
-
+let firstStreamData;
 describe('twichApi.getStreams', function() {
     it('should return an array without parameters', function() {
         return api.getStreams().then(result => {
             expect(result).to.be.a('array');
             expect(result).to.not.be.empty;
             expect(result[0]).to.be.a('object');
+            firstStreamData = result[0];
         });
     });
     it('should return an array with parameters', function() {
-        return api.getStreams({ user_login: 'shad_ra' }).then(result => {
-            expect(result).to.be.a('array');
-            expect(result.length).to.be.equal(1);
-            expect(result[0]).to.be.a('object');
-        });
+        return api
+            .getStreams({ user_id: firstStreamData.user_id })
+            .then(result => {
+                expect(result).to.be.a('array');
+                expect(result.length).to.be.equal(1);
+                expect(result[0]).to.be.a('object');
+            });
     });
 });
 
 describe('twichApi.getStreamsMetadata', function() {
     it('should return the stream metadata', function() {
         return api
-            .getStreamsMetadata({ user_login: 'shad_ra' })
+            .getStreamsMetadata({ user_id: firstStreamData.user_id })
             .then(result => {
                 expect(result).to.be.a('array');
                 expect(result.length).to.be.equal(1);
                 expect(result[0]).to.be.a('object');
-                expect(result[0].user_id).to.be.equal('21800871');
+                expect(result[0].user_id).to.be.equal(firstStreamData.user_id);
             });
     });
 });
