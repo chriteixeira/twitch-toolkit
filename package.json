@@ -22,7 +22,7 @@
         "test": "cross-env NODE_ENV=test mocha --reporter spec",
         "test:coverage-report": "nyc report --reporter=text",
         "test:coverage": "nyc npm run test",
-        "generate-docs": "node_modules/.bin/jsdoc --configure .jsdoc.json --verbose"
+        "docs": "node_modules/.bin/jsdoc --configure .jsdoc.json --verbose"
     },
     "author": "chriteixeira",
     "license": "MIT",
