@@ -124,7 +124,6 @@ TwitchWebSub.prototype.subscribe = async function(topic, eventName) {
 };
 
 /**
- * @private
  * This method will handle the request received by the express server and validate the subscriptions or properly emit the events with the received data.
  * @param {object} request The express request object.
  * @param {object} response The express response object.

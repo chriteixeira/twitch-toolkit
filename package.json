@@ -1,6 +1,6 @@
 {
     "name": "twitch-toolkit",
-    "version": "0.0.6",
+    "version": "0.0.7",
     "description": "A set of tools to integrate with Twitch API, Twitch Chat and Twitch WebHooks.",
     "keywords": [
         "twitch",

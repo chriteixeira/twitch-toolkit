@@ -51,9 +51,9 @@ describe('twichApi.getStreams', function() {
         });
     });
     it('should return an array with parameters', function() {
-        return api.getStreams().then(result => {
+        return api.getStreams({ user_login: 'shad_ra' }).then(result => {
             expect(result).to.be.a('array');
-            expect(result).to.not.be.empty;
+            expect(result.length).to.be.equal(1);
             expect(result[0]).to.be.a('object');
         });
     });
@@ -61,12 +61,14 @@ describe('twichApi.getStreams', function() {
 
 describe('twichApi.getStreamsMetadata', function() {
     it('should return the stream metadata', function() {
-        return api.getStreamsMetadata({ login: 'shad_ra' }).then(result => {
-            expect(result).to.be.a('array');
-            expect(result).to.not.be.empty;
-            expect(result[0]).to.be.a('object');
-            expect(result[0].user_id).to.be.equal('37402112');
-        });
+        return api
+            .getStreamsMetadata({ user_login: 'shad_ra' })
+            .then(result => {
+                expect(result).to.be.a('array');
+                expect(result.length).to.be.equal(1);
+                expect(result[0]).to.be.a('object');
+                expect(result[0].user_id).to.be.equal('21800871');
+            });
     });
 });
 
@@ -74,7 +76,7 @@ describe('twichApi.getUsers', function() {
     it('should return an array with parameters', function() {
         return api.getUsers({ login: 'shad_ra' }).then(result => {
             expect(result).to.be.a('array');
-            expect(result).to.not.be.empty;
+            expect(result.length).to.be.equal(1);
             expect(result[0]).to.be.a('object');
             expect(result[0].login).to.be.equal('shad_ra');
         });

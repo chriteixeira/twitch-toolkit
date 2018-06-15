@@ -76,15 +76,15 @@ TwitchApi.prototype.getStreams = async function(options) {
 /**
  * Gets metadata information about active streams playing Overwatch or Hearthstone. Streams are sorted by number of current viewers, in descending order. Across multiple pages of results, there may be duplicate or missing streams, as viewers join and leave streams.
  *
- * @param {string} token The users token.
+ * @param {object} options The parameters to the api call. The parameter object is defined in the Twitch documentation: https://dev.twitch.tv/docs/api/reference#get-streams-metadata
  * @returns {Promise<Object[]>} The data object in the API response. The response is defined in the Twitch documentation: https://dev.twitch.tv/docs/api/reference#get-streams-metadata
  */
-TwitchApi.prototype.getStreamsMetadata = async function() {
+TwitchApi.prototype.getStreamsMetadata = async function(options) {
     try {
         return await _performGetRequest(
             'https://api.twitch.tv/helix/streams/metadata',
             this.config.client_id,
-            null,
+            options,
             this.getAccessToken()
         );
     } catch (err) {
