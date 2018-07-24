@@ -34,8 +34,8 @@ Every module must be instanced with the required configs as described in the nex
 
 The API module must be instanced with the following config object:
 
-| Attribute Name      | Type   |  Description          | 
-| ------------------- ----------------------  |
+| Name      | Type   |  Description          | 
+| ------------------- |---------|-------------  |
 | client_id           | string | The client_id to be used to access the API. This is required. |
 | client_secret       | string | The secret to be used to access the API that requires login. If this is not provided, the restricted methods will thrown an error. |
 
@@ -78,8 +78,8 @@ The Twitch Webhooks implementation, as described in https://dev.twitch.tv/docs/a
 
 The API module must be instanced with the following config object:
 
-| Attribute Name      | Type   |  Description          | 
-| ------------------- ----------------------  |
+| Name      | Type   |  Description          | 
+| ----------|--------- |----------------------  |
 | client_id           | string | The client ID of the user to be passed to the Hub (un)subscribe requests. This is required. |
 | callbackUrl         | string | The callback URL that will receive the Hub requests. These requests should be forwarded to the handleRequest method to properly handle these data. This is required. |
 | logger         | object | The logger object. |
@@ -93,7 +93,7 @@ const twitchWebHook = new WebHook({
         });
 ```
 
-The Webhook/WebSub requires a public endpoint on the running express server/application to receive the data from the hub. Without this, its impossible to make this work.
+The Webhook/WebSub requires a public endpoint on the running server/application to receive the data from the hub. Without this, its impossible to make this work.
 
 The methods and events are described in the [WebHook documentation page](https://chriteixeira.github.io/twitch-toolkit/0.0.8/WebHook.html)
 
