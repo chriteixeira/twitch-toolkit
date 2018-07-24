@@ -4,26 +4,27 @@ const request = require('request-promise');
 const util = require('util');
 const eventemitter = require('eventemitter3');
 const _ = require('./helpers');
+const logger = require('./src/logger').getLogger();
 
 const API_BASE_URL = 'https://api.twitch.tv/helix';
 
 /**
- * @class TwitchWebSub
+ * @class TwitchWebhook
  * The Twitch Webhooks implementation, as described in https://dev.twitch.tv/docs/api/webhooks-guide/ .
- * The Webhook/WebSub requires a public endpoint on the running express server/application to receive the data from the hub. Without this, its impossible to make this work.
+ * The Webhook requires a public endpoint on the running express server/application to receive the data from the hub. Without this, its impossible to make this work.
  *
  * @param {object} config The config object.
- * @param {string} config.client_id The client ID of the user to be passed to the Hub (un)subscribe requests.
- * @param {string} config.callbackUrl The callback URL that will receive the Hub requests. These requests should be forwarded to the handleRequest method to properly handle these data.
- * @param {object} logger The logger object.
+ * @param {string} config.client_id The client ID of the user to be passed to the Hub (un)subscribe requests. This is required.
+ * @param {string} config.callbackUrl The callback URL that will receive the Hub requests. These requests should be forwarded to the handleRequest method to properly handle these data. This is required.
+ * @param {object} config.logger The logger object.
  */
-function TwitchWebSub(config, logger) {
+function TwitchWebhook(config) {
     eventemitter.call(this);
     this.config = config;
-    this.logger = logger;
+    this.logger = config.logger || logger;
 
     this.secret = _.uuidv4();
-    this.subscribersMap = {};
+    this.subscribersMap = new Map();
 }
 
 /**
@@ -32,15 +33,15 @@ function TwitchWebSub(config, logger) {
  * @param {number} fromId The ID of the user who starts following someone.
  * @param {number} toId The ID of the user who has a new follower.
  * @return {string} The subscription ID, used to identify the active topic.
- * @fires TwitchWebSub#WebSub:user_follows
+ * @fires TwitchWebhook#Webhook:user_follows
  */
-TwitchWebSub.prototype.topicUserFollowsSubscribe = async function(
+TwitchWebhook.prototype.topicUserFollowsSubscribe = async function(
     fromId,
     toId
 ) {
     /**
      * Stream User Follows Event
-     * @event TwitchWebSub#WebSub:user_follows
+     * @event TwitchWebhook#Webhook:user_follows
      * @param {object} data The data object received from the Hub.
      * @param {string} id The subscription ID.
      */
@@ -51,7 +52,7 @@ TwitchWebSub.prototype.topicUserFollowsSubscribe = async function(
         } else if (toId) {
             topic += '&to_id=' + toId;
         }
-        return this.subscribe(topic, 'user_follows');
+        return await this.subscribe(topic, 'user_follows');
     } catch (err) {
         throw err;
     }
@@ -62,20 +63,20 @@ TwitchWebSub.prototype.topicUserFollowsSubscribe = async function(
  *
  * @param {number} streamUserId The ID of the user whose stream is monitored.
  * @return {string} The subscription ID, used to identify the active topic.
- * @fires TwitchWebSub#WebSub:stream_up_down
+ * @fires TwitchWebhook#Webhook:stream_up_down
  */
-TwitchWebSub.prototype.topicStreamUpDownSubscribe = async function(
+TwitchWebhook.prototype.topicStreamUpDownSubscribe = async function(
     streamUserId
 ) {
     /**
      * Stream Up/Down Event
-     * @event TwitchWebSub#WebSub:stream_up_down
+     * @event TwitchWebhook#Webhook:stream_up_down
      * @param {object} data The data object received from the Hub.
      * @param {string} id The subscription ID.
      */
     try {
         let topic = API_BASE_URL + '/streams?user_id=' + streamUserId;
-        return this.subscribe(topic, 'stream_up_down');
+        return await this.subscribe(topic, 'stream_up_down');
     } catch (err) {
         throw err;
     }
@@ -88,9 +89,9 @@ TwitchWebSub.prototype.topicStreamUpDownSubscribe = async function(
  * @param {string} eventName The event name that will be fired when new data is received.
  * @return {string} The subscription ID, used to identify the active topic.
  */
-TwitchWebSub.prototype.subscribe = async function(topic, eventName) {
+TwitchWebhook.prototype.subscribe = async function(topic, eventName) {
     try {
-        this.logger.debug('Subscribing WebSub with topic: ' + topic);
+        this.logger.debug('Subscribing Webhook with topic: ' + topic);
         let item = {
             id: _.uuidv4(),
             topic: topic,
@@ -116,7 +117,7 @@ TwitchWebSub.prototype.subscribe = async function(topic, eventName) {
             json: true
         });
 
-        this.subscribersMap[item.id] = item;
+        this.subscribersMap.set(item.id, item);
         return item.id;
     } catch (err) {
         throw err;
@@ -124,31 +125,46 @@ TwitchWebSub.prototype.subscribe = async function(topic, eventName) {
 };
 
 /**
- * This method will handle the request received by the express server and validate the subscriptions or properly emit the events with the received data.
- * @param {object} request The express request object.
- * @param {object} response The express response object.
+ * This method will handle the request data and validate the subscriptions or properly emit the events with the received data.
+ * @param {string} method The http method
+ * @param {string[]} headers The headers array
+ * @param {string[]} data The data array (query string for get, body for post)
+ * @returns {object} The response result object with the status and data to be sent in the response.
  */
-TwitchWebSub.prototype.handleRequest = function(request, response) {
-    try {
-        this.logger.debug('Receiving new WebSub request');
-        if (request.query['hub.challenge']) {
-            response.send(request.query['hub.challenge']);
-        } else {
-            let id = request.query['item.id'];
-            if (id && this.subscribersMap[id]) {
-                let item = this.subscribersMap[id];
-                let data = request.body ? request.body.data : null;
+TwitchWebhook.prototype.handleRequest = function(method, headers, data) {
+    this.logger.debug('Handling new Webhook request');
+    if (!method) throw new Error('Missing method parameter');
+    if (!headers) throw new Error('Missing headers parameter');
+    if (!data) throw new Error('Missing data Parameter');
 
-                //TODO Validate secret
-                response.sendStatus(200);
-                this.emit(item.eventName, data, id);
-            } else {
-                response.sendStatus(400);
-            }
+    if (method.toUpperCase() === 'GET') {
+        if (data['hub.challenge']) {
+            return {
+                status: 200,
+                data: data['hub.challenge']
+            };
+        } else {
+            throw new Error('Missing the hub.challenge parameter');
         }
-    } catch (err) {
-        response.sendStatus(500);
-        throw err;
+    } else if (method.toUpperCase() === 'POST') {
+        let id = data['item.id'];
+        let signature = headers['x-hub-signature'];
+
+        if (id && this.subscribersMap.get(id)) {
+            let item = this.subscribersMap.get(id);
+            if (
+                _.validateHMACSignature(signature, 'shad1', item.secret, data)
+            ) {
+                this.emit(item.eventName, data, id);
+                return { status: 200 };
+            } else {
+                return { status: 403 };
+            }
+        } else {
+            return { status: 410 };
+        }
+    } else {
+        throw new Error('Invalid method ' + method);
     }
 };
 
@@ -156,11 +172,11 @@ TwitchWebSub.prototype.handleRequest = function(request, response) {
  * Unsubscribe from a topic by its ID.
  * @param {string} id The subscription ID.
  */
-TwitchWebSub.prototype.unsubscribe = async function(id) {
+TwitchWebhook.prototype.unsubscribe = async function(id) {
     try {
-        this.logger.debug('Requesting WebSub unsubscription with id: ' + id);
-        if (this.subscribersMap[id]) {
-            let item = this.subscribersMap[id];
+        this.logger.debug('Requesting Webhook unsubscription with id: ' + id);
+        if (this.subscribersMap.get(id)) {
+            let item = this.subscribersMap.get(id);
             await request({
                 url: API_BASE_URL + '/webhooks/hub',
                 method: 'POST',
@@ -177,7 +193,7 @@ TwitchWebSub.prototype.unsubscribe = async function(id) {
                 },
                 json: true
             });
-            this.logger.debug('WebSub unsubscribed: ' + id);
+            this.logger.debug('Webhook unsubscribed: ' + id);
         } else {
             this.logger.warn('Unable to find subscription with id ' + id);
         }
@@ -187,14 +203,14 @@ TwitchWebSub.prototype.unsubscribe = async function(id) {
 };
 
 /**
- * Destroy the WebSub, unsubscribing every active subscription.
+ * Destroy the Webhook, unsubscribing every active subscription.
  */
-TwitchWebSub.prototype.destroy = async function() {
+TwitchWebhook.prototype.destroy = async function() {
     try {
-        this.logger.info('Destroying TwitchWebSub...');
-        for (const key in this.subscribersMap) {
+        this.logger.info('Destroying TwitchWebhook...');
+        for (const key in this.subscribersMap.keys()) {
             if (this.subscribersMap.hasOwnProperty(key)) {
-                let item = this.subscribersMap[key];
+                let item = this.subscribersMap.get(key);
                 this.logger.debug(
                     'Unsubscribing user with topic: ' + item.topic
                 );
@@ -202,11 +218,11 @@ TwitchWebSub.prototype.destroy = async function() {
             }
         }
         this.subscribersMap = {};
-        this.logger.info('TwitchWebSub destroyed.');
+        this.logger.info('TwitchWebhook destroyed.');
     } catch (err) {
         throw err;
     }
 };
 
-util.inherits(TwitchWebSub, eventemitter);
-module.exports = TwitchWebSub;
+util.inherits(TwitchWebhook, eventemitter);
+module.exports = TwitchWebhook;

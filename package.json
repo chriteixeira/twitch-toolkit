@@ -1,6 +1,6 @@
 {
     "name": "twitch-toolkit",
-    "version": "0.0.7",
+    "version": "0.0.8",
     "description": "A set of tools to integrate with Twitch API, Twitch Chat and Twitch WebHooks.",
     "keywords": [
         "twitch",
@@ -20,6 +20,7 @@
     "scripts": {
         "lint": "eslint \"{src,test}/**/*.js\"",
         "test": "cross-env NODE_ENV=test mocha --reporter spec",
+        "test:debug": "cross-env NODE_ENV=test mocha --reporter spec --inspect-brk",
         "test:coverage-report": "nyc report --reporter=text",
         "test:coverage": "nyc npm run test",
         "docs": "node_modules/.bin/jsdoc --configure .jsdoc.json --verbose"
@@ -34,16 +35,17 @@
         "url": "https://github.com/chriteixeira/twitch-toolkit/issues"
     },
     "dependencies": {
+        "crypto": "1.0.1",
         "eventemitter3": "3.1.0",
         "request-promise": "4.2.2",
         "tmi.js": "1.2.1",
-        "winston": "3.0.0-rc1"
+        "winston": "3.0.0"
     },
     "devDependencies": {
         "chai": "4.1.2",
         "cross-env": "5.2.0",
-        "eslint": "4.19.1",
-        "eslint-plugin-mocha": "5.0.0",
+        "eslint": "5.1.0",
+        "eslint-plugin-mocha": "5.1.0",
         "jsdoc": "3.5.5",
         "minami": "1.2.3",
         "mocha": "5.2.0",

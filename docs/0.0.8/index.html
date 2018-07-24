@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Home - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Classes</li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="TwitchApi.html">TwitchApi</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="TwitchApi.html#getAccessToken">getAccessToken</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="TwitchApi.html#getGames">getGames</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="TwitchApi.html#getStreams">getStreams</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="TwitchApi.html#getStreamsMetadata">getStreamsMetadata</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="TwitchApi.html#getUsers">getUsers</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="TwitchApi.html#getUsersFollows">getUsersFollows</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="TwitchApi.html#getVideos">getVideos</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="TwitchApi.html#isLive">isLive</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="TwitchApi.html#updateUser">updateUser</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="TwitchApi.html#validateAccessToken">validateAccessToken</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="TwitchChatEmitter.html">TwitchChatEmitter</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="TwitchChatEmitter.html#connect">connect</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="TwitchWebhook.html">TwitchWebhook</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="TwitchWebhook.html#destroy">destroy</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="TwitchWebhook.html#handleRequest">handleRequest</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="TwitchWebhook.html#subscribe">subscribe</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="TwitchWebhook.html#topicStreamUpDownSubscribe">topicStreamUpDownSubscribe</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="TwitchWebhook.html#topicUserFollowsSubscribe">topicUserFollowsSubscribe</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="TwitchWebhook.html#unsubscribe">unsubscribe</a></span></li><li class="nav-heading">Events</li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="TwitchChatEmitter.html#event:Chat:chat_parsed">Chat:chat_parsed</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="TwitchWebhook.html#event:Webhook:stream_up_down">Webhook:stream_up_down</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="TwitchWebhook.html#event:Webhook:user_follows">Webhook:user_follows</a></span></li>
+</nav>
+
+<div id="main">
+    
+
+    
+
+
+
+    
+
+
+
+
+
+
+
+
+
+    
+
+
+    <section class="readme">
+        <article><h1>twitch-toolkit</h1><p><a href="http://doge.mit-license.org"><img src="http://img.shields.io/:license-mit-blue.svg?style=flat" alt="License"></a>
+<a href="https://travis-ci.org/chriteixeira/twitch-toolkit"><img src="https://travis-ci.org/chriteixeira/twitch-toolkit.svg?branch=master" alt="Build Status"></a></p>
+<p>A set of tools to integrate with Twitch API, Twitch Chat and Twitch WebHooks. </p>
+<p><a href="https://nodei.co/npm/twitch-toolkit/"><img src="https://nodei.co/npm/twitch-toolkit.png?downloads=true&amp;downloadRank=true" alt="NPM"></a></p>
+<p>To start to use this module, check the <a href="https://chriteixeira.github.io/twitch-toolkit/latest/">project documentation</a>. </p>
+<h2>Installation</h2><p>Using npm:</p>
+<pre class="prettyprint source lang-shell"><code>$ npm i --save twitch-toolkit</code></pre><h2>Usage</h2><p>The library is composed by three independent modules:</p>
+<ul>
+<li><strong>API</strong>: Provides access to the Helix API.</li>
+<li><strong>Chat</strong>: Provides access to the chat events through <a href="https://github.com/tmijs">tmi.js</a> .</li>
+<li><strong>WebHook</strong>: Provides access to the WebHook topics and events.</li>
+</ul>
+<p>The toolkit exports each module and you can access it like this:</p>
+<pre class="prettyprint source lang-javascript"><code>const {API, Chat, WebHook} = require('twitch-toolkit');</code></pre><p>Every module must be instanced with the required configs as described in the next sessions.</p>
+<h3>API</h3><p>The API module must be instanced with the following config object:</p>
+<table>
+<thead>
+<tr>
+<th>Attribute Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>client_id</td>
+<td>string</td>
+<td>The client_id to be used to access the API. This is required.</td>
+</tr>
+<tr>
+<td>client_secret</td>
+<td>string</td>
+<td>The secret to be used to access the API that requires login. If this is not provided, the restricted methods will thrown an error.</td>
+</tr>
+</tbody>
+</table>
+<p>Example:</p>
+<pre class="prettyprint source lang-javascript"><code>const { API } = require('twitch-toolkit');
+const twitchAPI = new API({client_id: 'id-string', client_secret: 'secret-string'})</code></pre><p>The API methods are described in the <a href="https://chriteixeira.github.io/twitch-toolkit/latest/TwitchApi.html">TwitchApi documentation page</a></p>
+<h3>Chat</h3><p>The API module must be instanced with the config objects described in the <a href="https://chriteixeira.github.io/twitch-toolkit/latest/TwitchChatEmitter.html#TwitchChatEmitter">constructor documentation</a></p>
+<p>Example:</p>
+<pre class="prettyprint source lang-javascript"><code>const { Chat } = require('twitch-toolkit');
+const twitchChat = new Chat(options)</code></pre><p>To connected to the channels with the specified user, you'll need to call the connect function:</p>
+<pre class="prettyprint source lang-javascript"><code>twitch.connect()</code></pre><p>After that, you'll be able to listen to channel and chat events. You can also disconnect from the chat, if you wish:</p>
+<pre class="prettyprint source lang-javascript"><code>twitch.disconnect()</code></pre><p>The methods and events are described in the <a href="https://chriteixeira.github.io/twitch-toolkit/latest/TwitchChatEmitter.html">TwitchChatEmitter documentation page</a></p>
+<h3>Webhooks</h3><p>The Twitch Webhooks implementation, as described in https://dev.twitch.tv/docs/api/webhooks-guide/ .</p>
+<p>The API module must be instanced with the following config object:</p>
+<table>
+<thead>
+<tr>
+<th>Attribute Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>client_id</td>
+<td>string</td>
+<td>The client ID of the user to be passed to the Hub (un)subscribe requests. This is required.</td>
+</tr>
+<tr>
+<td>callbackUrl</td>
+<td>string</td>
+<td>The callback URL that will receive the Hub requests. These requests should be forwarded to the handleRequest method to properly handle these data. This is required.</td>
+</tr>
+<tr>
+<td>logger</td>
+<td>object</td>
+<td>The logger object.</td>
+</tr>
+</tbody>
+</table>
+<p>Example:</p>
+<pre class="prettyprint source lang-javascript"><code>const { WebHook } = require('twitch-toolkit');
+const twitchWebHook = new WebHook({
+            client_id: 'id-string',
+            callbackUrl: 'http://domain/path/to/cbUrl'
+        });</code></pre><p>The Webhook/WebSub requires a public endpoint on the running express server/application to receive the data from the hub. Without this, its impossible to make this work.</p>
+<p>The methods and events are described in the <a href="https://chriteixeira.github.io/twitch-toolkit/latest/WebHook.html">WebHook documentation page</a></p>
+<h2>Tests</h2><p>The module uses <a href="https://mochajs.org/">Mocha</a> with <a href="http://www.chaijs.com/">Chai</a> for unit tests and <a href="https://istanbul.js.org/">Istanbul</a> for test coverage reports.</p>
+<p>To run the mocha tests:</p>
+<pre class="prettyprint source lang-shell"><code>$ npm run test</code></pre><p>To run tests in debug mode (--inspect-brk)</p>
+<pre class="prettyprint source lang-shell"><code>$ npm run test:debug</code></pre><p>To run the tests with the coverage report:</p>
+<pre class="prettyprint source lang-shell"><code>$ npm run test:coverage</code></pre><p>To properly run the tests, the following Environment Variables must be set:</p>
+<table>
+<thead>
+<tr>
+<th>Var Name</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TWITCH_CLIENT_ID</td>
+<td>The Client-ID to be used to make the API calls.</td>
+</tr>
+<tr>
+<td>TWITCH_CLIENT_SECRET</td>
+<td>The Client Secret to be used to make the API calls.</td>
+</tr>
+<tr>
+<td>TWITCH_CLIENT_USERNAME</td>
+<td>The Username related to the Client-ID</td>
+</tr>
+<tr>
+<td>TWITCH_CLIENT_PASSWORD</td>
+<td>The OAUTH password. It can be generated <a href="https://twitchapps.com/tmi/">here</a>.</td>
+</tr>
+</tbody>
+</table>
+<h2>License</h2><p>Licensed under the <a href="https://github.com/chriteixeira/twitch-toolkit/blob/master/LICENSE">MIT</a> License.</p></article>
+    </section>
+
+
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Tue Jul 24 2018 16:07:13 GMT-0300 (E. South America Standard Time) using the Minami theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>

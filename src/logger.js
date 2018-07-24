@@ -1,14 +1,14 @@
 const winston = require('winston');
 
+let logger;
 
-exports.create = (level) => {
-    let logger = winston.createLogger({
-        level: level,
-        format: winston.format.json(),
-        transports: [
-            new winston.transports.Console(),
-        ],
-    });
+exports.getLogger = () => {
+    if (!logger) {
+        logger = winston.createLogger({
+            level: process.env.LOG_LEVEL,
+            format: winston.format.json(),
+            transports: [new winston.transports.Console()]
+        });
+    }
     return logger;
 };
-
