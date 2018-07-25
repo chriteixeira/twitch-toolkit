@@ -14,7 +14,7 @@ const API_BASE_URL = 'https://api.twitch.tv/helix';
  * The Webhook requires a public endpoint on the running express server/application to receive the data from the hub. Without this, its impossible to make this work.
  *
  * @param {object} config The config object.
- * @param {string} config.client_id The client ID of the user to be passed to the Hub (un)subscribe requests. This is required.
+ * @param {string} config.clientId The client ID of the user to be passed to the Hub (un)subscribe requests. This is required.
  * @param {string} config.callbackUrl The callback URL that will receive the Hub requests. These requests should be forwarded to the handleRequest method to properly handle these data. This is required.
  * @param {object} config.logger The logger object.
  */
@@ -104,7 +104,7 @@ TwitchWebhook.prototype.subscribe = async function(topic, eventName) {
             url: API_BASE_URL + '/webhooks/hub',
             method: 'POST',
             headers: {
-                'Client-ID': this.config.client_id,
+                'Client-ID': this.config.clientId,
                 'Content-Type': 'application/json'
             },
             form: {
@@ -181,7 +181,7 @@ TwitchWebhook.prototype.unsubscribe = async function(id) {
                 url: API_BASE_URL + '/webhooks/hub',
                 method: 'POST',
                 headers: {
-                    'Client-ID': this.config.client_id,
+                    'Client-ID': this.config.clientId,
                     'Content-Type': 'application/json'
                 },
                 form: {

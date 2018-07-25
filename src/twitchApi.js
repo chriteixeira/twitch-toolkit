@@ -6,8 +6,8 @@ const request = require('request-promise');
  * Twitch API
  * @constructor
  * @param {object} config The configuration object to access the API.
- * @param {string} config.client_id The client_id to be used to access the API.
- * @param {string} config.client_secret The secret to be used to access the API that requires login. If this is not provided, the restricted methods will thrown an error.
+ * @param {string} config.clientId The client id to be used to access the API.
+ * @param {string} config.clientSecret The secret to be used to access the API that requires login. If this is not provided, the restricted methods will thrown an error.
  */
 function TwitchApi(config) {
     this.config = config || {};
@@ -61,7 +61,7 @@ TwitchApi.prototype.getGames = async function(options) {
     try {
         return await _performGetRequest(
             'https://api.twitch.tv/helix/games',
-            this.config.client_id,
+            this.config.clientId,
             options
         );
     } catch (err) {
@@ -80,7 +80,7 @@ TwitchApi.prototype.getStreams = async function(options) {
     try {
         return await _performGetRequest(
             'https://api.twitch.tv/helix/streams',
-            this.config.client_id,
+            this.config.clientId,
             options
         );
     } catch (err) {
@@ -98,7 +98,7 @@ TwitchApi.prototype.getStreamsMetadata = async function(options) {
     try {
         return await _performGetRequest(
             'https://api.twitch.tv/helix/streams/metadata',
-            this.config.client_id,
+            this.config.clientId,
             options,
             this.getAccessToken()
         );
@@ -119,7 +119,7 @@ TwitchApi.prototype.getUsers = async function(options) {
     try {
         return await _performGetRequest(
             'https://api.twitch.tv/helix/users',
-            this.config.client_id,
+            this.config.clientId,
             options
         );
     } catch (err) {
@@ -138,7 +138,7 @@ TwitchApi.prototype.getUsersFollows = async function(options) {
     try {
         return await _performGetRequest(
             'https://api.twitch.tv/helix/users/follows',
-            this.config.client_id,
+            this.config.clientId,
             options
         );
     } catch (err) {
@@ -157,7 +157,7 @@ TwitchApi.prototype.getVideos = async function(options) {
     try {
         return await _performGetRequest(
             'https://api.twitch.tv/helix/videos',
-            this.config.client_id,
+            this.config.clientId,
             options
         );
     } catch (err) {
@@ -176,7 +176,7 @@ TwitchApi.prototype.updateUser = async function(description) {
     try {
         return await _performPutRequest(
             'https://api.twitch.tv/helix/users',
-            this.config.client_id,
+            this.config.clientId,
             { description }
         );
     } catch (err) {
@@ -195,8 +195,8 @@ TwitchApi.prototype.getAccessToken = async function() {
                 url: 'https://id.twitch.tv/oauth2/token',
                 method: 'POST',
                 form: {
-                    client_id: this.config.client_id,
-                    client_secret: this.config.client_secret,
+                    client_id: this.config.clientId,
+                    client_secret: this.config.clientSecret,
                     grant_type: 'client_credentials',
                     scope: 'user:edit user:read:email'
                 },
@@ -220,10 +220,10 @@ TwitchApi.prototype.getAccessToken = async function() {
  * @param {bool} requireAuth Check if the method requires authentication
  * @param {string} accessToken Check if a special token should be used
  */
-async function _performGetRequest(url, client_id, qs, accessToken) {
+async function _performGetRequest(url, clientId, qs, accessToken) {
     try {
         let headers = {
-            'Client-ID': client_id
+            'Client-ID': clientId
         };
         if (accessToken) {
             headers['Authorization'] = 'Bearer ' + accessToken;
@@ -252,10 +252,10 @@ async function _performGetRequest(url, client_id, qs, accessToken) {
  * @param {*} url
  * @param {*} body
  */
-async function _performPutRequest(url, client_id, body, accessToken) {
+async function _performPutRequest(url, clientId, body, accessToken) {
     try {
         let headers = {
-            'Client-ID': client_id,
+            'Client-ID': clientId,
             'Content-Type': 'application/x-www-form-urlencoded'
         };
         if (accessToken) {

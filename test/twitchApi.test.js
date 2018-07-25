@@ -6,8 +6,8 @@ const expect = chai.expect; // eslint-disable-line no-unused-vars
 const twichApi = require('../src/twitchApi');
 
 let config = {
-    client_id: process.env.TWITCH_CLIENT_ID,
-    client_secret: process.env.TWITCH_CLIENT_SECRET
+    clientId: process.env.TWITCH_CLIENT_ID,
+    clientSecret: process.env.TWITCH_CLIENT_SECRET
 };
 
 let api = new twichApi(config);
