@@ -4,7 +4,7 @@ const request = require('request-promise');
 const util = require('util');
 const eventemitter = require('eventemitter3');
 const _ = require('./helpers');
-const logger = require('./src/logger').getLogger();
+const logger = require('./logger').getLogger();
 
 const API_BASE_URL = 'https://api.twitch.tv/helix';
 
