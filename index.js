@@ -2,10 +2,10 @@
 
 const Chat = require('./src/twitchChatEmitter');
 const API = require('./src/twitchApi');
-const WebSub = require('./src/twitchWebSub');
+const WebHook = require('./src/twitchWebhook');
 
 module.exports = {
     API,
     Chat,
-    WebSub
+    WebHook
 };
