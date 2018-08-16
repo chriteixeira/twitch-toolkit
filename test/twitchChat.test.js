@@ -46,6 +46,19 @@ let triggerDelay = {
     eventName: 'test_delay_evt'
 };
 
+let timedMessage1 = {
+    message: 'Test Timed Message 1',
+    channel: '#stallonecobrabot',
+    minDelay: 100
+};
+
+let timedMessage2 = {
+    message: 'Test Timed Message 2',
+    channel: '#stallonecobrabot',
+    minDelay: 100,
+    minChatMessages: 10
+};
+
 let chatConfig = {
     channels: ['#stallonecobrabot'],
     username: process.env.TWITCH_CLIENT_USERNAME,
@@ -57,7 +70,8 @@ let chatConfig = {
         triggerWordText,
         triggerCommandText,
         triggerDelay
-    ]
+    ],
+    timedMessages: [timedMessage1, timedMessage2]
 };
 let chat;
 
@@ -215,17 +229,17 @@ describe('twitchChat:_handleMessage', () => {
 
 describe('twitchChat:_getMessageWords', () => {
     it('should return an empty array for an empty string', function() {
-        let words = chat._getMessageWords('','');
+        let words = chat._getMessageWords('', '');
         expect(words).to.not.be.empty;
     });
 
     it('should return the right number of words for a non-empty string', function() {
-        let words = chat._getMessageWords('this is a test.','!');
+        let words = chat._getMessageWords('this is a test.', '!');
         expect(words).to.have.lengthOf(4);
     });
 
     it('should return the right words', function() {
-        let words = chat._getMessageWords('this is a test.','!');
+        let words = chat._getMessageWords('this is a test.', '!');
         expect(words[0]).to.be.equal('this');
         expect(words[1]).to.be.equal('is');
         expect(words[2]).to.be.equal('a');
@@ -233,11 +247,55 @@ describe('twitchChat:_getMessageWords', () => {
     });
 
     it('should return the right words and command', function() {
-        let words = chat._getMessageWords('this is a !test.','!');
+        let words = chat._getMessageWords('this is a !test.', '!');
         expect(words[0]).to.be.equal('this');
         expect(words[1]).to.be.equal('is');
         expect(words[2]).to.be.equal('a');
         expect(words[3]).to.be.equal('!test');
+    });
+});
+
+describe('twitchChat:_triggerTimedMessage', () => {
+    it('should trigger a message with no minimum messages constraint', function(done) {
+        let timedMessage = {
+            channel: 'stallonecobrabot',
+            message: 'Trigger timed message test 1',
+            minChatMessages: null,
+            messageCount: 0
+        };
+        chat.on('chat_parsed', (channel, userstate, message) => {
+            chat.removeAllListeners('chat_parsed');
+            if (
+                message === timedMessage.message &&
+                timedMessage.messageCount === 1
+            ) {
+                done();
+            } else {
+                done(new Error('Validation failed.'));
+            }
+        });
+        chat._triggerTimedMessage(chat, timedMessage);
+    });
+
+    it('should not trigger a message when the minimum message constraint is not met', function(done) {
+        let timedMessage = {
+            channel: 'stallonecobrabot',
+            message: 'Trigger timed message test 2',
+            minChatMessages: chat.chatMessageCount + 1,
+            messageCount: 1
+        };
+        let messageReceived = false;
+        chat.on('chat_parsed', (channel, userstate, message) => {
+            if (message == timedMessage.message) {
+                chat.removeAllListeners('chat_parsed');
+                messageReceived = true;
+                done(new Error('Validation failed.'));
+            }
+        });
+        chat._triggerTimedMessage(chat, timedMessage);
+        setTimeout(() => {
+            if (!messageReceived) done();
+        }, 100);
     });
 });
 

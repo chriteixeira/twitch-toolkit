@@ -1,6 +1,7 @@
 'use strict';
 
 const request = require('request-promise');
+const logger = require('./logger').getLogger();
 
 /**
  * Twitch API
@@ -8,10 +9,12 @@ const request = require('request-promise');
  * @param {object} config The configuration object to access the API.
  * @param {string} config.clientId The client id to be used to access the API.
  * @param {string} config.clientSecret The secret to be used to access the API that requires login. If this is not provided, the restricted methods will thrown an error.
+ * @param {object} config.logger The logger object.
  */
 function TwitchApi(config) {
     this.config = config || {};
     this.accessToken = null;
+    this.logger = config.logger || logger;
 }
 
 /**
@@ -189,6 +192,7 @@ TwitchApi.prototype.updateUser = async function(description) {
  * @return The access token.
  */
 TwitchApi.prototype.getAccessToken = async function() {
+    logger.debug('Getting access token from twitch API.');
     try {
         if (!this.accessToken) {
             var response = await request({
@@ -221,6 +225,13 @@ TwitchApi.prototype.getAccessToken = async function() {
  * @param {string} accessToken Check if a special token should be used
  */
 async function _performGetRequest(url, clientId, qs, accessToken) {
+    logger.debug(
+        'Performing GET request to Twitch API to URL: ' +
+            url +
+            ' with query string: ' +
+            JSON.stringify(qs) +
+            ' .'
+    );
     try {
         let headers = {
             'Client-ID': clientId
@@ -253,6 +264,13 @@ async function _performGetRequest(url, clientId, qs, accessToken) {
  * @param {*} body
  */
 async function _performPutRequest(url, clientId, body, accessToken) {
+    logger.debug(
+        'Performing PUT request to Twitch API to URL: ' +
+            url +
+            ' with body: ' +
+            JSON.stringify(body) +
+            ' .'
+    );
     try {
         let headers = {
             'Client-ID': clientId,

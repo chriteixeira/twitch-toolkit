@@ -3,7 +3,6 @@
 const tmi = require('tmi.js');
 
 const util = require('util');
-const helpers = require('./helpers');
 const request = require('request-promise');
 
 /**
@@ -11,8 +10,9 @@ const request = require('request-promise');
  * The Twitch chat implementation, based on the already existing module tmi.js (tmijs.org), adding more features and handlers to chat interation.
  *
  * @param {object}   config The config object
+ * @param {boolean}  config.debug Debug mode. If true, will show the debug messages.
  * @param {object}   config.logger The logger instance. If empty, the default logger will be used.
- * @param {string[]} config.channels The twitch channels that will be used. This is required for chat and websub.
+ * @param {string[]} config.channels The twitch channels that will be used. This is required.
  * @param {string}   config.username The chat bot username. This is required.
  * @param {string}   config.password The chat bot OAUTH token password. You can get it at http://twitchapps.com/tmi/ . This is required.
  * @param {boolean}  config.reconnect Reconnect to Twitch when disconnected from server. Default: false
@@ -22,18 +22,29 @@ const request = require('request-promise');
  * @param {number}   config.reconnectInterval Number of ms before attempting to reconnect (Default: 1000)
  * @param {boolean}  config.secure Use secure connection (SSL / HTTPS) (Overrides port to 443)
  * @param {number}   config.timeout Number of ms to disconnect if no responses from server (Default: 9999)
+ * @param {string}   config.commandPrefix The prefix caracter for chat command. Default is "!".
+ *
  * @param {object[]} config.triggers The triggers object array.
  * @param {string}   config.triggers[].name The name of the trigger. This is required.
  * @param {string}   config.triggers[].type The type of the trigger. Can be one 'word' or 'command'. This is required
+ * @param {string}   config.channel The channel in which the trigger will be used. This is required.
  * @param {boolean}  config.triggers[].chatTrigger Define if its a chat trigger. (Default: true)
  * @param {boolean}  config.triggers[].whisperTrigger Define if its a whisper trigger. (Default: false)
  * @param {number}   config.triggers[].minDelay The delay before the action is triggered again. (Default: 0)
  * @param {string}   config.triggers[].eventName The name of the event that will be triggered. If this is empty, no event will be emitted.
  * @param {string}   config.triggers[].responseText The text that will be sent to chat/whisper if the action is triggered. If this is empty, nothing will be sent.
- * @param {string}   config.commandPrefix The prefix caracter for chat command. Default is "!"
+ *
+ * @param {object[]} config.timedMessages The timed messages array.
+ * @param {string}   config.timedMessages[].message The message to be sent.
+ * @param {string}   config.channel The channel in which the timed message will be sent. This is required.
+ * @param {number}   config.timedMessages[].minDelay The minimum delay, in seconds, between this kind of message. This is required.
+ * @param {number}   config.timedMessages[].minChatMessages The minimum ammount of messages in chat to send this message.
+ *
  */
 function TwitchChatEmitter(config) {
-    //TODO Validate required
+    if (!config.channels) throw new Error('Missing channels value.');
+    if (!config.username) throw new Error('Missing username value.');
+    if (!config.password) throw new Error('Missing password value.');
     let options = {
         options: {
             debug:
@@ -56,11 +67,15 @@ function TwitchChatEmitter(config) {
         },
         channels: config.channels,
         logger: config.logger,
-        commandPrefix: config.commandPrefix || '!'
+        commandPrefix: config.commandPrefix || '!',
+        timedMessages: config.timedMessages
     };
 
-    //Create the triggers maps
+    //Create the local variables
+    this.chatMessageCount = 0;
     this.triggersMap = new Map();
+
+    //Create the triggers maps
     if (config.triggers) {
         for (let i in config.triggers) {
             let trigger = config.triggers[i];
@@ -82,6 +97,7 @@ function TwitchChatEmitter(config) {
             this.triggersMap.set(name, triggerObj);
         }
     }
+
     tmi.Client.call(this, options);
 
     if (config.logger) {
@@ -106,10 +122,55 @@ TwitchChatEmitter.prototype.connect = async function() {
             method: 'GET'
         });
         this.chatEmotes = JSON.parse(emotes);
-        return tmi.Client.prototype.connect.call(this);
+
+        let result = await tmi.Client.prototype.connect.call(this);
+
+        //Prepare the timed messages
+        if (this.getOptions().timedMessages) {
+            this.getOptions().timedMessagesTimerIds = [];
+            for (let i in this.getOptions().timedMessages) {
+                let message = this.getOptions().timedMessages[i];
+                if (!message.minDelay) {
+                    throw new Error(
+                        'Missing minimum delay constraint for timed message.'
+                    );
+                }
+                if (!message.channel) {
+                    throw new Error(
+                        'Missing the channel for the timed message.'
+                    );
+                }
+                let timedMessage = {
+                    message: message.message,
+                    channel: message.channel,
+                    minDelay: message.minDelay,
+                    minChatMessages: message.minChatMessages,
+                    messageCount: 0, //Number of messages sent before the last time it was sent.
+                    lastTrigger: null
+                };
+
+                if (message.minDelay) {
+                    let timerId = setInterval(() => {
+                        _triggerTimedMessage(this, timedMessage);
+                    }, message.minDelay * 1000);
+                    this.getOptions().timedMessagesTimerIds.push(timerId);
+                }
+            }
+        }
+
+        return result;
     } catch (err) {
         throw err;
     }
+};
+
+TwitchChatEmitter.prototype.disconnect = async function() {
+    if (this.getOptions().timedMessagesTimerIds) {
+        for (let i in this.getOptions().timedMessagesTimerIds) {
+            clearInterval(this.getOptions().timedMessagesTimerIds[i]);
+        }
+    }
+    return tmi.Client.prototype.disconnect.call(this);
 };
 
 /**
@@ -189,6 +250,7 @@ async function _handleMessage(chat, type, channel, userstate, message, self) {
          * @param {bool} self Whether the command was sent to the user bot or not.
          */
         if (type === 'chat') {
+            chat.messageCount++;
             chat.emit('chat_parsed', channel, userstate, finalMessage, self);
         }
     } catch (err) {
@@ -204,12 +266,25 @@ function _getMessageWords(message, commandPrefix) {
     return message.replace(reg, '').split(' ');
 }
 
+function _triggerTimedMessage(chat, timedMessage) {
+    if (
+        !timedMessage.minChatMessages ||
+        chat.chatMessageCount >=
+            timedMessage.minChatMessages * (timedMessage.messageCount + 1)
+    ) {
+        timedMessage.messageCount++;
+        timedMessage.lastTrigger = new Date();
+        chat.say(timedMessage.channel, timedMessage.message);
+    }
+}
+
 util.inherits(TwitchChatEmitter, tmi.Client);
 
 /* test code */
 if (process.env.NODE_ENV === 'test') {
     TwitchChatEmitter.prototype._handleMessage = _handleMessage;
     TwitchChatEmitter.prototype._getMessageWords = _getMessageWords;
+    TwitchChatEmitter.prototype._triggerTimedMessage = _triggerTimedMessage;
 }
 /* end-test code */
 
