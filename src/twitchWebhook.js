@@ -128,34 +128,41 @@ TwitchWebhook.prototype.subscribe = async function(topic, eventName) {
  * This method will handle the request data and validate the subscriptions or properly emit the events with the received data.
  * @param {string} method The http method
  * @param {string[]} headers The headers array
- * @param {string[]} data The data array (query string for get, body for post)
+ * @param {string[]} qs The request query string array. Used for GET and POST
+ * @param {string[]} body The POST body. Used just for post.
  * @returns {object} The response result object with the status and data to be sent in the response.
  */
-TwitchWebhook.prototype.handleRequest = function(method, headers, data) {
+TwitchWebhook.prototype.handleRequest = function(method, headers, qs, body) {
     this.logger.debug('Handling new Webhook request');
     if (!method) throw new Error('Missing method parameter');
     if (!headers) throw new Error('Missing headers parameter');
-    if (!data) throw new Error('Missing data Parameter');
+    if (!qs) throw new Error('Missing qs Parameter');
 
     if (method.toUpperCase() === 'GET') {
-        if (data['hub.challenge']) {
+        if (qs['hub.challenge']) {
             return {
                 status: 200,
-                data: data['hub.challenge']
+                data: qs['hub.challenge']
             };
         } else {
             throw new Error('Missing the hub.challenge parameter');
         }
     } else if (method.toUpperCase() === 'POST') {
-        let id = data['item.id'];
+        if (!body) throw new Error('Missing body Parameter');
+        let id = qs['item.id'];
         let signature = headers['x-hub-signature'];
 
         if (id && this.subscribersMap.get(id)) {
             let item = this.subscribersMap.get(id);
             if (
-                _.validateHMACSignature(signature, 'shad1', item.secret, data)
+                _.validateHMACSignature(
+                    signature,
+                    'sha256',
+                    item.secret,
+                    JSON.stringify(body)
+                )
             ) {
-                this.emit(item.eventName, data, id);
+                this.emit(item.eventName, body.data, id);
                 return { status: 200 };
             } else {
                 return { status: 403 };
