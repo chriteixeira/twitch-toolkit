@@ -2,8 +2,8 @@
 
 A simple chat bot for Twitch with the following features:
 
-- *!uptime command:* shows in chat the bot's uptime.
-- *!discord command:* shows the channel's discord link.
+- **!uptime command:** shows in chat the bot's uptime.
+- **!discord command:** shows the channel's discord link.
 - Word trigger when the user says 'hello'.
 - Timed messages in 60 and 90 seconds.
 
