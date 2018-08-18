@@ -1,0 +1,17 @@
+{
+  "name": "webhook-notifications",
+  "version": "1.0.0",
+  "description": "A simple webhook notification example",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "1.18.3",
+    "express": "4.16.3",
+    "ngrok": "3.0.1",
+    "twitch-toolkit": "0.0.7"
+  }
+}

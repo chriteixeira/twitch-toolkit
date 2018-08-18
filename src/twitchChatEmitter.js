@@ -27,7 +27,7 @@ const request = require('request-promise');
  * @param {object[]} config.triggers The triggers object array.
  * @param {string}   config.triggers[].name The name of the trigger. This is required.
  * @param {string}   config.triggers[].type The type of the trigger. Can be one 'word' or 'command'. This is required
- * @param {string}   config.channel The channel in which the trigger will be used. This is required.
+ * @param {string}   config.triggers[].channel The channel in which the trigger will be used. This is required.
  * @param {boolean}  config.triggers[].chatTrigger Define if its a chat trigger. (Default: true)
  * @param {boolean}  config.triggers[].whisperTrigger Define if its a whisper trigger. (Default: false)
  * @param {number}   config.triggers[].minDelay The delay before the action is triggered again. (Default: 0)
@@ -184,6 +184,7 @@ TwitchChatEmitter.prototype.disconnect = async function() {
 async function _handleMessage(chat, type, channel, userstate, message, self) {
     message = message.trim();
     let finalMessage = message;
+    chat.chatMessageCount++;
     try {
         if (!self || process.env.NODE_ENV === 'test') {
             let words = _getMessageWords(

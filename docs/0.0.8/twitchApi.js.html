@@ -42,17 +42,20 @@
             <pre class="prettyprint source linenums"><code>'use strict';
 
 const request = require('request-promise');
+const logger = require('./logger').getLogger();
 
 /**
  * Twitch API
  * @constructor
  * @param {object} config The configuration object to access the API.
- * @param {string} config.client_id The client_id to be used to access the API.
- * @param {string} config.client_secret The secret to be used to access the API that requires login. If this is not provided, the restricted methods will thrown an error.
+ * @param {string} config.clientId The client id to be used to access the API.
+ * @param {string} config.clientSecret The secret to be used to access the API that requires login. If this is not provided, the restricted methods will thrown an error.
+ * @param {object} config.logger The logger object.
  */
 function TwitchApi(config) {
     this.config = config || {};
     this.accessToken = null;
+    this.logger = config.logger || logger;
 }
 
 /**
@@ -102,7 +105,7 @@ TwitchApi.prototype.getGames = async function(options) {
     try {
         return await _performGetRequest(
             'https://api.twitch.tv/helix/games',
-            this.config.client_id,
+            this.config.clientId,
             options
         );
     } catch (err) {
@@ -121,7 +124,7 @@ TwitchApi.prototype.getStreams = async function(options) {
     try {
         return await _performGetRequest(
             'https://api.twitch.tv/helix/streams',
-            this.config.client_id,
+            this.config.clientId,
             options
         );
     } catch (err) {
@@ -139,7 +142,7 @@ TwitchApi.prototype.getStreamsMetadata = async function(options) {
     try {
         return await _performGetRequest(
             'https://api.twitch.tv/helix/streams/metadata',
-            this.config.client_id,
+            this.config.clientId,
             options,
             this.getAccessToken()
         );
@@ -160,7 +163,7 @@ TwitchApi.prototype.getUsers = async function(options) {
     try {
         return await _performGetRequest(
             'https://api.twitch.tv/helix/users',
-            this.config.client_id,
+            this.config.clientId,
             options
         );
     } catch (err) {
@@ -179,7 +182,7 @@ TwitchApi.prototype.getUsersFollows = async function(options) {
     try {
         return await _performGetRequest(
             'https://api.twitch.tv/helix/users/follows',
-            this.config.client_id,
+            this.config.clientId,
             options
         );
     } catch (err) {
@@ -198,7 +201,7 @@ TwitchApi.prototype.getVideos = async function(options) {
     try {
         return await _performGetRequest(
             'https://api.twitch.tv/helix/videos',
-            this.config.client_id,
+            this.config.clientId,
             options
         );
     } catch (err) {
@@ -217,7 +220,7 @@ TwitchApi.prototype.updateUser = async function(description) {
     try {
         return await _performPutRequest(
             'https://api.twitch.tv/helix/users',
-            this.config.client_id,
+            this.config.clientId,
             { description }
         );
     } catch (err) {
@@ -230,14 +233,15 @@ TwitchApi.prototype.updateUser = async function(description) {
  * @return The access token.
  */
 TwitchApi.prototype.getAccessToken = async function() {
+    logger.debug('Getting access token from twitch API.');
     try {
         if (!this.accessToken) {
             var response = await request({
                 url: 'https://id.twitch.tv/oauth2/token',
                 method: 'POST',
                 form: {
-                    client_id: this.config.client_id,
-                    client_secret: this.config.client_secret,
+                    client_id: this.config.clientId,
+                    client_secret: this.config.clientSecret,
                     grant_type: 'client_credentials',
                     scope: 'user:edit user:read:email'
                 },
@@ -261,10 +265,17 @@ TwitchApi.prototype.getAccessToken = async function() {
  * @param {bool} requireAuth Check if the method requires authentication
  * @param {string} accessToken Check if a special token should be used
  */
-async function _performGetRequest(url, client_id, qs, accessToken) {
+async function _performGetRequest(url, clientId, qs, accessToken) {
+    logger.debug(
+        'Performing GET request to Twitch API to URL: ' +
+            url +
+            ' with query string: ' +
+            JSON.stringify(qs) +
+            ' .'
+    );
     try {
         let headers = {
-            'Client-ID': client_id
+            'Client-ID': clientId
         };
         if (accessToken) {
             headers['Authorization'] = 'Bearer ' + accessToken;
@@ -293,10 +304,17 @@ async function _performGetRequest(url, client_id, qs, accessToken) {
  * @param {*} url
  * @param {*} body
  */
-async function _performPutRequest(url, client_id, body, accessToken) {
+async function _performPutRequest(url, clientId, body, accessToken) {
+    logger.debug(
+        'Performing PUT request to Twitch API to URL: ' +
+            url +
+            ' with body: ' +
+            JSON.stringify(body) +
+            ' .'
+    );
     try {
         let headers = {
-            'Client-ID': client_id,
+            'Client-ID': clientId,
             'Content-Type': 'application/x-www-form-urlencoded'
         };
         if (accessToken) {
@@ -341,7 +359,7 @@ module.exports = TwitchApi;
 <br class="clear">
 
 <footer>
-    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Tue Jul 24 2018 16:07:13 GMT-0300 (E. South America Standard Time) using the Minami theme.
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Aug 17 2018 18:58:48 GMT-0300 (E. South America Standard Time) using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>
