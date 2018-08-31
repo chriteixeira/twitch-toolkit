@@ -1,6 +1,6 @@
 {
     "name": "twitch-toolkit",
-    "version": "0.0.8",
+    "version": "0.0.9",
     "description": "A set of tools to integrate with Twitch API, Twitch Chat and Twitch WebHooks.",
     "keywords": [
         "twitch",
@@ -14,6 +14,7 @@
         "robot",
         "pubsub",
         "websub",
+        "webhook",
         "toolkit"
     ],
     "main": "index.js",

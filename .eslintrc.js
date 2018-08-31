@@ -11,7 +11,9 @@ module.exports = {
     },
     plugins: ['mocha'],
     rules: {
-        indent: ['error', 4],
+        indent: ['error', 4, {
+            'SwitchCase': 1
+        }],
         'linebreak-style': ['error', 'windows'],
         quotes: ['error', 'single'],
         semi: ['error', 'always'],

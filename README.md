@@ -20,6 +20,7 @@ $ npm i --save twitch-toolkit
 The library is composed by three independent modules:
 * **API**: Provides access to the Helix API.
 * **Chat**: Provides access to the chat events through [tmi.js](https://github.com/tmijs) .
+* **PubSub**: Provides access to the Twitch PubSub.
 * **WebHook**: Provides access to the WebHook topics and events.
 
 The toolkit exports each module and you can access it like this:
@@ -70,6 +71,31 @@ twitch.disconnect()
 ```
 
 The methods and events are described in the [TwitchChatEmitter documentation page](https://chriteixeira.github.io/twitch-toolkit/0.0.8/TwitchChatEmitter.html)
+
+### PubSub
+
+The Twitch PubSub implementation, as described in https://dev.twitch.tv/docs/pubsub/ .
+
+The API module must be instanced with the following config object:
+
+| Name      | Type   |  Description          | 
+| ----------|--------- |----------------------  |
+| logger         | object | The logger object. |
+| authToken         | string | The Twitch with OAuth token. |
+| reconnect         | string | Reconnect to Twitch PubSub when disconnected from server. Default: false |
+
+Example:
+```javascript
+const { WebHook } = require('twitch-toolkit');
+const twitchWebHook = new WebHook({
+            client_id: 'id-string',
+            callbackUrl: 'http://domain/path/to/cbUrl'
+        });
+```
+
+The Webhook/WebSub requires a public endpoint on the running server/application to receive the data from the hub. Without this, its impossible to make this work.
+
+The methods and events are described in the [WebHook documentation page](https://chriteixeira.github.io/twitch-toolkit/0.0.8/WebHook.html)
 
 
 ### Webhooks
