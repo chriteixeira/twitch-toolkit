@@ -98,8 +98,9 @@ describe('twitchPubSub._onMessage', () => {
                 }
             }
         };
-        websub.on('bits.44322889', (data) => {
-            if (JSON.stringify(message.data.message.data) === JSON.stringify(data)) {
+        websub.on('bits', (id, data) => {
+            if (id == message.data.message.data['channel_id'] &&
+                JSON.stringify(message.data.message.data) === JSON.stringify(data)) {
                 done();
             } else {
                 done(new Error('Bits message doesnt match.'));
@@ -139,8 +140,9 @@ describe('twitchPubSub._onMessage', () => {
                 }
             }
         };
-        websub.on('subscription.44322889', (data) => {
-            if (JSON.stringify(message.data.message.data) === JSON.stringify(data)) {
+        websub.on('subscription', (id, data) => {
+            if (id == message.data.message['user_id'] &&
+                JSON.stringify(message.data.message.data) === JSON.stringify(data)) {
                 done();
             } else {
                 done(new Error('Subscription message doesnt match.'));
@@ -179,8 +181,9 @@ describe('twitchPubSub._onMessage', () => {
                 }
             }
         };
-        websub.on('commerce.44322889', (data) => {
-            if (JSON.stringify(message.data.message.data) === JSON.stringify(data)) {
+        websub.on('commerce', (id, data) => {
+            if (id == message.data.message['user_id'] &&
+                JSON.stringify(message.data.message.data) === JSON.stringify(data)) {
                 done();
             } else {
                 done(new Error('Commerce message doesnt match.'));
@@ -255,8 +258,9 @@ describe('twitchPubSub._onMessage', () => {
                 }
             }
         };
-        websub.on('whisper.44322889', (data) => {
-            if (JSON.stringify(message.data.message.data) === JSON.stringify(data)) {
+        websub.on('whisper', (id, data) => {
+            if (id == message.data['data_object']['from_id'] &&
+                JSON.stringify(message.data.message.data) === JSON.stringify(data)) {
                 done();
             } else {
                 done(new Error('Whisper message doesnt match.'));

@@ -243,7 +243,7 @@ function _handleMessage(message) {
     }
 
     if (type) {
-        this.emit(type + '.' + id, message.data.message.data);
+        this.emit(type, id, message.data.message.data);
     }
 }
 

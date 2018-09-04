@@ -13,15 +13,15 @@ let config = {
 let api = new twichApi(config);
 
 describe('twichApi.getAuthToken', () => {
-    it('should return a token for authentication', function() {
+    it('should return a token for authentication', function () {
         api.getAccessToken().then(result => {
             expect(result).to.be.a('string');
         });
     });
 });
 
-describe('twichApi.validateAccessToken', function() {
-    it('should accept a valid token', function() {
+describe('twichApi.validateAccessToken', function () {
+    it('should accept a valid token', function () {
         let token = process.env.TWITCH_CLIENT_PASSWORD.substring(6);
         return api.validateAccessToken(token).then(result => {
             expect(result).to.be.a('object');
@@ -32,40 +32,58 @@ describe('twichApi.validateAccessToken', function() {
     });
 });
 
-describe('twichApi.getGames', function() {
-    it('should return one game for single parameter', function() {
-        return api.getGames({ name: 'Overwatch' }).then(result => {
+describe('twichApi.getGames', function () {
+    it('should return one game for single parameter', function () {
+        return api.getGames({
+            name: 'Overwatch'
+        }).then(result => {
             expect(result).to.be.a('array');
             expect(result).to.not.be.empty;
             expect(result[0]).to.be.a('object');
         });
     });
 });
-let firstStreamData;
-describe('twichApi.getStreams', function() {
-    it('should return an array without parameters', function() {
+let firstStreamData, secondStreamData;
+describe('twichApi.getStreams', function () {
+    it('should return an array without parameters', function () {
         return api.getStreams().then(result => {
             expect(result).to.be.a('array');
             expect(result).to.not.be.empty;
             expect(result[0]).to.be.a('object');
             firstStreamData = result[0];
+            secondStreamData = result[1];
         });
     });
-    it('should return an array with parameters', function() {
+    it('should return an array with parameters', function () {
         return api
-            .getStreams({ user_id: firstStreamData.user_id })
+            .getStreams({
+                user_id: firstStreamData.user_id
+            })
             .then(result => {
                 expect(result).to.be.a('array');
                 expect(result.length).to.be.equal(1);
                 expect(result[0]).to.be.a('object');
             });
     });
+    it('should return an array with array parameters', function () {
+        return api
+            .getStreams({
+                user_id: [firstStreamData.user_id, secondStreamData.user_id]
+            })
+            .then(result => {
+                expect(result).to.be.a('array');
+                expect(result.length).to.be.equal(2);
+                expect(result[0]).to.be.a('object');
+            });
+    });
 });
 
-describe('twichApi.getStreamsMetadata', function() {
-    it('should return the stream metadata', function() {
+describe('twichApi.getStreamsMetadata', function () {
+    it('should return the stream metadata', function () {
         return api
-            .getStreamsMetadata({ user_id: firstStreamData.user_id })
+            .getStreamsMetadata({
+                user_id: firstStreamData.user_id
+            })
             .then(result => {
                 expect(result).to.be.a('array');
                 expect(result.length).to.be.equal(1);
@@ -75,9 +93,11 @@ describe('twichApi.getStreamsMetadata', function() {
     });
 });
 
-describe('twichApi.getUsers', function() {
-    it('should return an array with parameters', function() {
-        return api.getUsers({ login: 'shad_ra' }).then(result => {
+describe('twichApi.getUsers', function () {
+    it('should return an array with parameters', function () {
+        return api.getUsers({
+            login: 'shad_ra'
+        }).then(result => {
             expect(result).to.be.a('array');
             expect(result.length).to.be.equal(1);
             expect(result[0]).to.be.a('object');
@@ -86,9 +106,11 @@ describe('twichApi.getUsers', function() {
     });
 });
 
-describe('twichApi.getUsersFollows', function() {
-    it('should return an array with parameters', function() {
-        return api.getUsersFollows({ to_id: 21800871 }).then(result => {
+describe('twichApi.getUsersFollows', function () {
+    it('should return an array with parameters', function () {
+        return api.getUsersFollows({
+            to_id: 21800871
+        }).then(result => {
             expect(result).to.be.a('array');
             expect(result).to.not.be.empty;
             expect(result[0]).to.be.a('object');
