@@ -100,7 +100,7 @@ describe('twitchPubSub._onMessage', () => {
         };
         websub.on('bits', (id, data) => {
             if (id == message.data.message.data['channel_id'] &&
-                JSON.stringify(message.data.message.data) === JSON.stringify(data)) {
+                JSON.stringify(message.data.message) === JSON.stringify(data)) {
                 done();
             } else {
                 done(new Error('Bits message doesnt match.'));
@@ -142,7 +142,7 @@ describe('twitchPubSub._onMessage', () => {
         };
         websub.on('subscription', (id, data) => {
             if (id == message.data.message['user_id'] &&
-                JSON.stringify(message.data.message.data) === JSON.stringify(data)) {
+                JSON.stringify(message.data.message) === JSON.stringify(data)) {
                 done();
             } else {
                 done(new Error('Subscription message doesnt match.'));
@@ -183,7 +183,7 @@ describe('twitchPubSub._onMessage', () => {
         };
         websub.on('commerce', (id, data) => {
             if (id == message.data.message['user_id'] &&
-                JSON.stringify(message.data.message.data) === JSON.stringify(data)) {
+                JSON.stringify(message.data.message) === JSON.stringify(data)) {
                 done();
             } else {
                 done(new Error('Commerce message doesnt match.'));
@@ -260,7 +260,7 @@ describe('twitchPubSub._onMessage', () => {
         };
         websub.on('whisper', (id, data) => {
             if (id == message.data['data_object']['from_id'] &&
-                JSON.stringify(message.data.message.data) === JSON.stringify(data)) {
+                JSON.stringify(message.data.message) === JSON.stringify(data)) {
                 done();
             } else {
                 done(new Error('Whisper message doesnt match.'));

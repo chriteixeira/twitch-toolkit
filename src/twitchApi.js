@@ -62,9 +62,8 @@ TwitchApi.prototype.validateAccessToken = async function(token) {
  */
 TwitchApi.prototype.getGames = async function(options) {
     try {
-        return await _performGetRequest(
+        return await _performGetRequest.call(this, 
             'https://api.twitch.tv/helix/games',
-            this.config.clientId,
             options
         );
     } catch (err) {
@@ -81,9 +80,8 @@ TwitchApi.prototype.getGames = async function(options) {
  */
 TwitchApi.prototype.getStreams = async function(options) {
     try {
-        return await _performGetRequest(
+        return await _performGetRequest.call(this, 
             'https://api.twitch.tv/helix/streams',
-            this.config.clientId,
             options
         );
     } catch (err) {
@@ -99,11 +97,9 @@ TwitchApi.prototype.getStreams = async function(options) {
  */
 TwitchApi.prototype.getStreamsMetadata = async function(options) {
     try {
-        return await _performGetRequest(
+        return await _performGetRequest.call(this, 
             'https://api.twitch.tv/helix/streams/metadata',
-            this.config.clientId,
             options,
-            this.getAccessToken()
         );
     } catch (err) {
         throw err;
@@ -120,9 +116,8 @@ TwitchApi.prototype.getStreamsMetadata = async function(options) {
  */
 TwitchApi.prototype.getUsers = async function(options) {
     try {
-        return await _performGetRequest(
+        return await _performGetRequest.call(this, 
             'https://api.twitch.tv/helix/users',
-            this.config.clientId,
             options
         );
     } catch (err) {
@@ -139,9 +134,8 @@ TwitchApi.prototype.getUsers = async function(options) {
  */
 TwitchApi.prototype.getUsersFollows = async function(options) {
     try {
-        return await _performGetRequest(
+        return await _performGetRequest.call(this, 
             'https://api.twitch.tv/helix/users/follows',
-            this.config.clientId,
             options
         );
     } catch (err) {
@@ -158,9 +152,8 @@ TwitchApi.prototype.getUsersFollows = async function(options) {
  */
 TwitchApi.prototype.getVideos = async function(options) {
     try {
-        return await _performGetRequest(
+        return await _performGetRequest.call(this, 
             'https://api.twitch.tv/helix/videos',
-            this.config.clientId,
             options
         );
     } catch (err) {
@@ -177,9 +170,8 @@ TwitchApi.prototype.getVideos = async function(options) {
  */
 TwitchApi.prototype.updateUser = async function(description) {
     try {
-        return await _performPutRequest(
+        return await _performPutRequest.call(this, 
             'https://api.twitch.tv/helix/users',
-            this.config.clientId,
             { description }
         );
     } catch (err) {
@@ -218,14 +210,11 @@ TwitchApi.prototype.getAccessToken = async function() {
 /**
  * @private
  * Perform the get request
- * @param {object} api The API object.
  * @param {string} url  The request URL.
  * @param {object} qs The query string object with the parameters.
- * @param {bool} requireAuth Check if the method requires authentication
- * @param {string} accessToken Check if a special token should be used
  */
-async function _performGetRequest(url, clientId, qs, accessToken) {
-    logger.debug(
+async function _performGetRequest(url, qs) {
+    this.logger.debug(
         'Performing GET request to Twitch API to URL: ' +
             url +
             ' with query string: ' +
@@ -234,10 +223,10 @@ async function _performGetRequest(url, clientId, qs, accessToken) {
     );
     try {
         let headers = {
-            'Client-ID': clientId
+            'Client-ID': this.config.clientId
         };
-        if (accessToken) {
-            headers['Authorization'] = 'Bearer ' + accessToken;
+        if (this.accessToken) {
+            headers['Authorization'] = 'Bearer ' + this.accessToken;
         }
         var response = await request({
             url: url,
@@ -259,12 +248,10 @@ async function _performGetRequest(url, clientId, qs, accessToken) {
 
 /**
  * @private
- * @param {*} api
  * @param {*} url
- * @param {*} body
  */
-async function _performPutRequest(url, clientId, body, accessToken) {
-    logger.debug(
+async function _performPutRequest(url, body) {
+    this.logger.debug(
         'Performing PUT request to Twitch API to URL: ' +
             url +
             ' with body: ' +
@@ -273,11 +260,11 @@ async function _performPutRequest(url, clientId, body, accessToken) {
     );
     try {
         let headers = {
-            'Client-ID': clientId,
+            'Client-ID': this.config.clientId,
             'Content-Type': 'application/x-www-form-urlencoded'
         };
-        if (accessToken) {
-            headers['Authorization'] = 'Bearer ' + accessToken;
+        if (this.accessToken) {
+            headers['Authorization'] = 'Bearer ' + this.accessToken;
         }
 
         var response = await request({

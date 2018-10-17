@@ -6,7 +6,7 @@ const _ = require('./helpers');
 const logger = require('./logger').getLogger();
 
 const WEBSOCKET_ADDRESS = 'wss://pubsub-edge.twitch.tv';
-const WEBSOCKET_TIMEOUT = 5 * 60 * 1000;
+const WEBSOCKET_TIMEOUT = 4.5 * 60 * 1000;
 
 /**
  * The Twitch PubSub connection.
@@ -243,18 +243,19 @@ function _handleMessage(message) {
     }
 
     if (type) {
-        this.emit(type, id, message.data.message.data);
+        this.emit(type, id, message.data.message);
     }
 }
 
 function _refresh() {
+    logger.debug('Refreshing the PubSub with a PING command.');
     this.ws.ping();
     let pingTime = new Date().getTime();
 
     //check if a PONG will be received in the next 10 seconds, otherwise issue a reconnects
     //CLEAR TIMEOUT
     setTimeout(() => {
-        if (this.options.reconnect && this.lastPong < pingTime) {
+        if (this.config.reconnect && this.lastPong < pingTime) {
             this.ws.reconnect();
         }
     }, 10000);
