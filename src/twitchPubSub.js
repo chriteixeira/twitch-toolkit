@@ -254,9 +254,10 @@ function _refresh() {
 
     //check if a PONG will be received in the next 10 seconds, otherwise issue a reconnects
     //CLEAR TIMEOUT
+    let _this = this;
     setTimeout(() => {
-        if (this.config.reconnect && this.lastPong < pingTime) {
-            this.ws.reconnect();
+        if (_this.config.reconnect && _this.lastPong < pingTime) {
+            _this.ws.reconnect();
         }
     }, 10000);
 }
