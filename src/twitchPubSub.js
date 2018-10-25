@@ -6,7 +6,7 @@ const _ = require('./helpers');
 const logger = require('./logger').getLogger();
 
 const WEBSOCKET_ADDRESS = 'wss://pubsub-edge.twitch.tv';
-const WEBSOCKET_TIMEOUT = 4.5 * 60 * 1000;
+const WEBSOCKET_TIMEOUT = 4 * 60 * 1000;
 
 /**
  * The Twitch PubSub connection.
