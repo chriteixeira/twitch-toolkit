@@ -38,7 +38,7 @@ function PubSubConnection(config) {
  * Connects to the Twitch PubSub
  * @returns {Promise} Promise for the connection.
  */
-PubSubConnection.prototype.connect = function () {
+PubSubConnection.prototype.connect = function() {
     this.logger.debug('Connecting Twitch PubSub');
     this.ws = new WebSocket(WEBSOCKET_ADDRESS);
     this.ws.onopen = _onOpen.bind(this);
@@ -46,13 +46,20 @@ PubSubConnection.prototype.connect = function () {
     this.ws.onmessage = _onMessage.bind(this);
     this.ws.onerror = _onError.bind(this);
 
-    this.refreshIntervalId = setInterval(_refresh.bind(this), WEBSOCKET_TIMEOUT);
+    this.ws.on('ping', _onPing.bind(this));
+    this.ws.on('pong', _onPong.bind(this));
 
-    return new Promise((resolve, reject) =>
-        this.connectionPromise = {
-            resolve,
-            reject
-        }
+    this.refreshIntervalId = setInterval(
+        _refresh.bind(this),
+        WEBSOCKET_TIMEOUT
+    );
+
+    return new Promise(
+        (resolve, reject) =>
+            (this.connectionPromise = {
+                resolve,
+                reject
+            })
     );
 };
 
@@ -60,7 +67,7 @@ PubSubConnection.prototype.connect = function () {
  * Disconnects to the Twitch PubSub
  * @returns {Promise} Promise for the disconnection.
  */
-PubSubConnection.prototype.disconnect = function () {
+PubSubConnection.prototype.disconnect = function() {
     this.logger.debug('Disconnecting Twitch PubSub');
     this.ws.close();
     this.isConnected = false;
@@ -68,19 +75,22 @@ PubSubConnection.prototype.disconnect = function () {
     delete this.ws;
     delete this.waitingResponseMap;
 
-    return new Promise((resolve, reject) =>
-        this.disconnectionPromise = {
-            resolve,
-            reject
-        }
+    return new Promise(
+        (resolve, reject) =>
+            (this.disconnectionPromise = {
+                resolve,
+                reject
+            })
     );
 };
 
 /**
  * Reconnect to WebSub and resubscribe to the already added topics.
- * @returns {Promise} 
+ * @returns {Promise}
  */
-PubSubConnection.prototype.reconnect = async function () {
+PubSubConnection.prototype.reconnect = async function() {
+    //clear the previous interval
+    clearInterval(this.refreshIntervalId);
     await this.connect();
     for (let i in this.subscriptions) {
         let subscription = this.subscriptions[i];
@@ -100,7 +110,12 @@ PubSubConnection.prototype.reconnect = async function () {
  * @param {String} authToken The oauth token with the necessary scopes.
  * @returns {Promise} The subscription promise that will be resolved when it receives the response.
  */
-PubSubConnection.prototype.subscribe = function (types, id, authToken, isReconnect) {
+PubSubConnection.prototype.subscribe = function(
+    types,
+    id,
+    authToken,
+    isReconnect
+) {
     return new Promise((resolve, reject) => {
         if (!types) reject('Missing types parameter');
         if (!id) reject('Missing id parameter');
@@ -179,16 +194,20 @@ function _onClose() {
     }
 }
 
+function _onPing() {
+    this.logger.debug('PING received.');
+}
+
+function _onPong() {
+    this.logger.debug('PONG received.');
+    this.lastPong = new Date().getTime();
+}
+
 function _onMessage(event) {
     this.logger.debug('New message received: ' + event.data);
     let message = JSON.parse(event.data);
     if (!message || !message.type) {
         throw new Error('Invalid message format.');
-    } else if (message.type.toUpperCase() === 'PONG') {
-        this.lastPong = new Date().getTime();
-    } else if (message.type.toUpperCase() === 'PING') {
-        this.logger.debug('Sending PONG.');
-        this.ws.pong();
     } else if (message.type.toUpperCase() === 'RECONNECT') {
         this.logger.debug('Reconnecting in 30 seconds.');
         setTimeout(this.reconnect, 30000);
@@ -217,7 +236,11 @@ function _handleResponse(message) {
             }
         }
     } else {
-        this.logger.warn('Connection for RESPONSE with nouce ' + message.nonce + ' not found.');
+        this.logger.warn(
+            'Connection for RESPONSE with nouce ' +
+                message.nonce +
+                ' not found.'
+        );
     }
 }
 
