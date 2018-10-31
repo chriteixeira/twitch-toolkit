@@ -153,6 +153,8 @@ To properly run the tests, the following Environment Variables must be set:
 | TWITCH_CLIENT_SECRET | The Client Secret to be used to make the API calls. |
 | TWITCH_CLIENT_USERNAME | The Username related to the Client-ID |
 | TWITCH_CLIENT_PASSWORD | The OAUTH password. It can be generated [here](https://twitchapps.com/tmi/). |
+| TWITCH_PUBSUB_CHANNEL_ID | The ID for the channel used in the PubSub tests. |
+| TWITCH_PUBSUB_AUTH_TOKEN | The OAUTH token for the PubSub with the proper scopes. |
 
 ## License
 
