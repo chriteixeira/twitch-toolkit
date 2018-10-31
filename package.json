@@ -24,7 +24,7 @@
         "test:debug": "cross-env NODE_ENV=test mocha --reporter spec --inspect-brk",
         "test:coverage-report": "nyc report --reporter=text",
         "test:coverage": "nyc npm run test",
-        "docs": "node_modules/.bin/jsdoc --configure .jsdoc.json --verbose"
+        "docs": "node_modules/.bin/jsdoc --configure .jsdoc.json --verbose && mv docs/twitch-toolkit/* docs/ && rm -rf docs/twitch-toolkit"
     },
     "author": "chriteixeira",
     "license": "MIT",
