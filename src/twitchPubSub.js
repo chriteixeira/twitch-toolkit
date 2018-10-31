@@ -280,7 +280,7 @@ function _refresh() {
     let _this = this;
     setTimeout(() => {
         if (_this.config.reconnect && _this.lastPong < pingTime) {
-            _this.ws.reconnect();
+            _this.reconnect();
         }
     }, 10000);
 }
