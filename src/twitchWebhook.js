@@ -87,41 +87,43 @@ TwitchWebhook.prototype.topicStreamUpDownSubscribe = async function(
  * The event handler will receive the data object and the subscription ID.
  * @param {string} topic The topic name/URL.
  * @param {string} eventName The event name that will be fired when new data is received.
- * @return {string} The subscription ID, used to identify the active topic.
+ * @returns {Promise} The subscription promise that will be resolved when it receives the response. It will return the connection ID.
  */
 TwitchWebhook.prototype.subscribe = async function(topic, eventName) {
-    try {
-        this.logger.debug('Subscribing Webhook with topic: ' + topic);
-        let item = {
-            id: _.uuidv4(),
-            topic: topic,
-            eventName: eventName,
-            subscribedAt: new Date(),
-            secret: _.generateRandomKey()
-        };
+    return new Promise(async (resolve, reject) => {
+        try {
+            this.logger.debug('Subscribing Webhook with topic: ' + topic);
+            let item = {
+                id: _.uuidv4(),
+                topic: topic,
+                eventName: eventName,
+                subscribedAt: new Date(),
+                secret: _.generateRandomKey(),
+                promise: { resolve, reject }
+            };
+            await request({
+                url: API_BASE_URL + '/webhooks/hub',
+                method: 'POST',
+                headers: {
+                    'Client-ID': this.config.clientId,
+                    'Content-Type': 'application/json'
+                },
+                form: {
+                    'hub.callback':
+                        this.config.callbackUrl + '?item.id=' + item.id,
+                    'hub.mode': 'subscribe',
+                    'hub.topic': topic,
+                    'hub.lease_seconds': 864000,
+                    'hub.secret': item.secret
+                },
+                json: true
+            });
 
-        await request({
-            url: API_BASE_URL + '/webhooks/hub',
-            method: 'POST',
-            headers: {
-                'Client-ID': this.config.clientId,
-                'Content-Type': 'application/json'
-            },
-            form: {
-                'hub.callback': this.config.callbackUrl + '?item.id=' + item.id,
-                'hub.mode': 'subscribe',
-                'hub.topic': topic,
-                'hub.lease_seconds': 864000,
-                'hub.secret': item.secret
-            },
-            json: true
-        });
-
-        this.subscribersMap.set(item.id, item);
-        return item.id;
-    } catch (err) {
-        throw err;
-    }
+            this.subscribersMap.set(item.id, item);
+        } catch (err) {
+            reject(err);
+        }
+    });
 };
 
 /**
@@ -139,42 +141,9 @@ TwitchWebhook.prototype.handleRequest = function(method, headers, qs, body) {
     if (!qs) throw new Error('Missing qs Parameter');
 
     if (method.toUpperCase() === 'GET') {
-        if (qs['hub.mode'] === 'denied') {
-            throw new Error(
-                `Hub subscription denied. Reason: ${qs['hub.reason']}`
-            );
-        }
-        if (qs['hub.challenge']) {
-            return {
-                status: 200,
-                data: qs['hub.challenge']
-            };
-        } else {
-            throw new Error('Missing the hub.challenge parameter');
-        }
+        return handleGetRequest.call(this, qs);
     } else if (method.toUpperCase() === 'POST') {
-        if (!body) throw new Error('Missing body Parameter');
-        let id = qs['item.id'];
-        let signature = headers['x-hub-signature'];
-
-        if (id && this.subscribersMap.get(id)) {
-            let item = this.subscribersMap.get(id);
-            if (
-                _.validateHMACSignature(
-                    signature,
-                    'sha256',
-                    item.secret,
-                    JSON.stringify(body)
-                )
-            ) {
-                this.emit(item.eventName, body.data, id);
-                return { status: 200 };
-            } else {
-                return { status: 403 };
-            }
-        } else {
-            return { status: 410 };
-        }
+        return handlePostRequest.call(this, headers, body);
     } else {
         throw new Error('Invalid method ' + method);
     }
@@ -183,35 +152,40 @@ TwitchWebhook.prototype.handleRequest = function(method, headers, qs, body) {
 /**
  * Unsubscribe from a topic by its ID.
  * @param {string} id The subscription ID.
+ * @returns {Promise} The subscription promise that will be resolved when it receives the response.
  */
 TwitchWebhook.prototype.unsubscribe = async function(id) {
-    try {
-        this.logger.debug('Requesting Webhook unsubscription with id: ' + id);
-        if (this.subscribersMap.get(id)) {
-            let item = this.subscribersMap.get(id);
-            await request({
-                url: API_BASE_URL + '/webhooks/hub',
-                method: 'POST',
-                headers: {
-                    'Client-ID': this.config.clientId,
-                    'Content-Type': 'application/json'
-                },
-                form: {
-                    'hub.callback':
-                        this.config.callbackUrl + '?item.id=' + item.id,
-                    'hub.mode': 'unsubscribe',
-                    'hub.topic': item.topic,
-                    'hub.secret': item.secret
-                },
-                json: true
-            });
-            this.logger.debug('Webhook unsubscribed: ' + id);
-        } else {
-            this.logger.warn('Unable to find subscription with id ' + id);
+    return new Promise(async (resolve, reject) => {
+        try {
+            this.logger.debug(
+                'Requesting Webhook unsubscription with id: ' + id
+            );
+            if (this.subscribersMap.get(id)) {
+                let item = this.subscribersMap.get(id);
+                await request({
+                    url: API_BASE_URL + '/webhooks/hub',
+                    method: 'POST',
+                    headers: {
+                        'Client-ID': this.config.clientId,
+                        'Content-Type': 'application/json'
+                    },
+                    form: {
+                        'hub.callback':
+                            this.config.callbackUrl + '?item.id=' + item.id,
+                        'hub.mode': 'unsubscribe',
+                        'hub.topic': item.topic,
+                        'hub.secret': item.secret
+                    },
+                    json: true
+                });
+                item.promise = { resolve, reject };
+            } else {
+                reject(new Error(`Unable to find subscription with id ${id}`));
+            }
+        } catch (err) {
+            reject(err);
         }
-    } catch (err) {
-        throw err;
-    }
+    });
 };
 
 /**
@@ -220,8 +194,8 @@ TwitchWebhook.prototype.unsubscribe = async function(id) {
 TwitchWebhook.prototype.destroy = async function() {
     try {
         this.logger.info('Destroying TwitchWebhook...');
-        for (let [key, item] of this.subscribersMap) {
-            await this.unsubscribe(item.id);
+        for (let key of this.subscribersMap.keys()) {
+            await this.unsubscribe(key);
         }
         this.subscribersMap = new Map();
         this.logger.info('TwitchWebhook destroyed.');
@@ -229,6 +203,84 @@ TwitchWebhook.prototype.destroy = async function() {
         throw err;
     }
 };
+
+function handleGetRequest(qs) {
+    if (!qs['item.id']) {
+        throw new Error('Missing item.id parameter.');
+    } else if (!this.subscribersMap.has(qs['item.id'])) {
+        throw new Error(`Subscription with id ${qs['item.id']} missing.`);
+    }
+
+    let result = null;
+    let error = null;
+
+    if (qs['hub.mode'] === 'denied') {
+        error = new Error(
+            `Hub subscription denied. Reason: ${qs['hub.reason']}`
+        );
+        result = { status: 200 };
+    } else if (!qs['hub.challenge']) {
+        error = new Error('Missing the hub.challenge parameter');
+        result = { status: 410 };
+    } else {
+        logger.debug(
+            `Processing hub.mode: ${qs['hub.mode']} get request for id ${
+                qs['item.id']
+            }. Sending hub.challenge.`
+        );
+        result = {
+            status: 200,
+            data: qs['hub.challenge']
+        };
+    }
+
+    if (
+        this.subscribersMap.has(qs['item.id']) &&
+        this.subscribersMap.get(qs['item.id']).promise
+    ) {
+        let subscription = this.subscribersMap.get(qs['item.id']);
+        if (error) {
+            subscription.promise.reject(error);
+        } else {
+            subscription.promise.resolve(qs['item.id']);
+        }
+        delete subscription.promise;
+    }
+
+    //Twitch, can for some reason send a denied after the challenge verification. This make sures the error
+    //is properly handled and the subscription is removed from the map.
+    if (error) {
+        this.subscribersMap.delete(qs['item.id']);
+        logger.error(error);
+    }
+
+    return result;
+}
+
+function handlePostRequest(headers, body) {
+    if (!body) throw new Error('Missing body Parameter');
+    let id = body['item.id'];
+    let signature = headers['x-hub-signature'];
+
+    if (id && this.subscribersMap.has(id)) {
+        let item = this.subscribersMap.get(id);
+        if (
+            _.validateHMACSignature(
+                signature,
+                'sha256',
+                item.secret,
+                JSON.stringify(body)
+            )
+        ) {
+            this.emit(item.eventName, body.data, id);
+            return { status: 200 };
+        } else {
+            return { status: 403 };
+        }
+    } else {
+        return { status: 410 };
+    }
+}
 
 util.inherits(TwitchWebhook, eventemitter);
 module.exports = TwitchWebhook;
