@@ -139,6 +139,11 @@ TwitchWebhook.prototype.handleRequest = function(method, headers, qs, body) {
     if (!qs) throw new Error('Missing qs Parameter');
 
     if (method.toUpperCase() === 'GET') {
+        if (qs['hub.mode'] === 'denied') {
+            throw new Error(
+                `Hub subscription denied. Reason: ${qs['hub.reason']}`
+            );
+        }
         if (qs['hub.challenge']) {
             return {
                 status: 200,
@@ -215,16 +220,10 @@ TwitchWebhook.prototype.unsubscribe = async function(id) {
 TwitchWebhook.prototype.destroy = async function() {
     try {
         this.logger.info('Destroying TwitchWebhook...');
-        for (const key in this.subscribersMap.keys()) {
-            if (this.subscribersMap.hasOwnProperty(key)) {
-                let item = this.subscribersMap.get(key);
-                this.logger.debug(
-                    'Unsubscribing user with topic: ' + item.topic
-                );
-                await this.unsubscribe(item.id);
-            }
+        for (let [key, item] of this.subscribersMap) {
+            await this.unsubscribe(item.id);
         }
-        this.subscribersMap = {};
+        this.subscribersMap = new Map();
         this.logger.info('TwitchWebhook destroyed.');
     } catch (err) {
         throw err;
