@@ -208,7 +208,7 @@ function handleGetRequest(qs) {
     if (!qs['item.id']) {
         throw new Error('Missing item.id parameter.');
     } else if (!this.subscribersMap.has(qs['item.id'])) {
-        throw new Error(`Subscription with id ${qs['item.id']} missing.`);
+        throw new Error(`Subscription with id ${qs['item.id']} missing. `);
     }
 
     let result = null;
@@ -249,7 +249,7 @@ function handleGetRequest(qs) {
 
     //Twitch, can for some reason send a denied after the challenge verification. This make sures the error
     //is properly handled and the subscription is removed from the map.
-    if (error) {
+    if (error || qs['hub.mode'] === 'unsubscribe') {
         this.subscribersMap.delete(qs['item.id']);
         logger.error(error);
     }
