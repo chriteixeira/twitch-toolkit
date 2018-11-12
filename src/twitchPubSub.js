@@ -8,7 +8,6 @@ const logger = require('./logger').getLogger();
 const WEBSOCKET_ADDRESS = 'wss://pubsub-edge.twitch.tv';
 const WEBSOCKET_TIMEOUT = 4 * 60 * 1000;
 
-
 //TODO Add this param and support
 //@param {number}   config.maxReconnectAttempts Max number of reconnection attempts (Default: Infinity)
 //@param {number}   config.maxReconnectInterval Max number of ms to delay a reconnection (Default: 30000)
@@ -111,12 +110,7 @@ TwitchPubSub.prototype.reconnect = async function() {
  * @param {String} authToken The oauth token with the necessary scopes.
  * @returns {Promise} The subscription promise that will be resolved when it receives the response.
  */
-TwitchPubSub.prototype.subscribe = function(
-    types,
-    id,
-    authToken,
-    isReconnect
-) {
+TwitchPubSub.prototype.subscribe = function(types, id, authToken, isReconnect) {
     return new Promise((resolve, reject) => {
         if (!types) reject('Missing types parameter');
         if (!id) reject('Missing id parameter');
@@ -167,7 +161,7 @@ TwitchPubSub.prototype.subscribe = function(
         };
         this.waitingResponseMap.set(key, subscription);
 
-        if (isReconnect) {
+        if (!isReconnect) {
             this.subscriptions.push({
                 types,
                 id,
@@ -196,12 +190,11 @@ function _onClose() {
 }
 
 function _onPing() {
-    this.logger.debug('PING received.');
+    this.logger.debug('WS PING received.');
 }
 
 function _onPong() {
-    this.logger.debug('PONG received.');
-    this.lastPong = new Date().getTime();
+    this.logger.debug('WS PONG received.');
 }
 
 function _onMessage(event) {
@@ -209,6 +202,8 @@ function _onMessage(event) {
     let message = JSON.parse(event.data);
     if (!message || !message.type) {
         throw new Error('Invalid message format.');
+    } else if (message.type.toUpperCase() === 'PONG') {
+        this.lastPong = new Date().getTime();
     } else if (message.type.toUpperCase() === 'RECONNECT') {
         this.logger.debug('Reconnecting in 30 seconds.');
         setTimeout(this.reconnect, 30000);
@@ -274,6 +269,7 @@ function _handleMessage(message) {
 function _refresh() {
     logger.debug('Refreshing the PubSub with a PING command.');
     this.ws.ping();
+    this.ws.send('{"type": "PING"}');
     let pingTime = new Date().getTime();
 
     //check if a PONG will be received in the next 10 seconds, otherwise issue a reconnects
