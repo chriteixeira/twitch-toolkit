@@ -36,7 +36,7 @@ const request = require('request-promise');
  *
  * @param {object[]} config.timedMessages The timed messages array.
  * @param {string}   config.timedMessages[].message The message to be sent.
- * @param {string}   config.channel The channel in which the timed message will be sent. This is required.
+ * @param {string}   config.timedMessages[].channel The channel in which the timed message will be sent. This is required.
  * @param {number}   config.timedMessages[].minDelay The minimum delay, in seconds, between this kind of message. This is required.
  * @param {number}   config.timedMessages[].minChatMessages The minimum ammount of messages in chat to send this message.
  *
