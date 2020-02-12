@@ -215,7 +215,7 @@ function _onMessage(event) {
 }
 
 function _onError(errorEvent) {
-    logger.warn('Error received: ' + errorEvent.message);
+    this.logger.warn('Error received: ' + errorEvent.message);
 }
 
 function _handleResponse(message) {
@@ -267,7 +267,7 @@ function _handleMessage(message) {
 }
 
 function _refresh() {
-    logger.debug('Refreshing the PubSub with a PING command.');
+    this.logger.debug('Refreshing the PubSub with a PING command.');
     this.ws.ping();
     this.ws.send('{"type": "PING"}');
     let pingTime = new Date().getTime();
