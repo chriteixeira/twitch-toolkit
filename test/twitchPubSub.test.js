@@ -32,14 +32,6 @@ describe('twitchPubSub.connect', () => {
 
         });
 
-        it('Should be able subscribe to commerce topic', function (done) {
-            websub.subscribe(['commerce'], process.env.TWITCH_PUBSUB_CHANNEL_ID, process.env.TWITCH_PUBSUB_AUTH_TOKEN)
-                .then(() => {
-                    done();
-                }).catch(err => done(err));
-
-        });
-
         it('Should be able subscribe to whisper topic', function (done) {
             websub.subscribe(['whisper'], process.env.TWITCH_PUBSUB_CHANNEL_ID, process.env.TWITCH_PUBSUB_AUTH_TOKEN)
                 .then(() => {
@@ -49,7 +41,7 @@ describe('twitchPubSub.connect', () => {
         });
 
         it('Should be able subscribe to all topics', function (done) {
-            websub.subscribe(['bits', 'subscription', 'commerce', 'whisper'], process.env.TWITCH_PUBSUB_CHANNEL_ID, process.env.TWITCH_PUBSUB_AUTH_TOKEN)
+            websub.subscribe(['bits', 'subscription', 'whisper'], process.env.TWITCH_PUBSUB_CHANNEL_ID, process.env.TWITCH_PUBSUB_AUTH_TOKEN)
                 .then(() => {
                     done();
                 }).catch(err => done(err));
