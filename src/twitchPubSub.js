@@ -126,9 +126,6 @@ TwitchPubSub.prototype.subscribe = function(types, id, authToken, isReconnect) {
                 case 'subscription':
                     topic = 'channel-subscribe-events-v1';
                     break;
-                case 'commerce':
-                    topic = 'channel-commerce-events-v1';
-                    break;
                 case 'whisper':
                     topic = 'whispers';
                     break;
