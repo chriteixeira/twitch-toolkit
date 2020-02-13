@@ -109,21 +109,15 @@ function TwitchChatEmitter(config) {
     this.on('whisper', (from, userstate, message, self) => {
         _handleMessage(this, 'whisper', null, userstate, message, self);
     });
-    this.chatEmotes = null;
 }
 
 /**
  * Connect to the chat.
  */
-TwitchChatEmitter.prototype.connect = async function() {
+TwitchChatEmitter.prototype.connect = async function () {
     try {
-        let emotes = await request({
-            url: 'https://twitchemotes.com/api_cache/v3/global.json',
-            method: 'GET'
-        });
-        this.chatEmotes = JSON.parse(emotes);
-
         let result = await tmi.Client.prototype.connect.call(this);
+        console.log(result);
 
         //Prepare the timed messages
         if (this.getOptions().timedMessages) {
@@ -164,7 +158,7 @@ TwitchChatEmitter.prototype.connect = async function() {
     }
 };
 
-TwitchChatEmitter.prototype.disconnect = async function() {
+TwitchChatEmitter.prototype.disconnect = async function () {
     if (this.getOptions().timedMessagesTimerIds) {
         for (let i in this.getOptions().timedMessagesTimerIds) {
             clearInterval(this.getOptions().timedMessagesTimerIds[i]);
@@ -200,7 +194,7 @@ async function _handleMessage(chat, type, channel, userstate, message, self) {
                             !trigger.minDelay ||
                             !triggers.lastDate ||
                             new Date().getTime() - trigger.minDelay >
-                                triggers.lastDate.getTime()
+                            triggers.lastDate.getTime()
                         ) {
                             if (trigger.eventName) {
                                 chat.emit(
@@ -228,22 +222,12 @@ async function _handleMessage(chat, type, channel, userstate, message, self) {
                     }
                     triggers.lastDate = new Date();
                 }
-                if (chat.chatEmotes[words[i]]) {
-                    let emoteHtml =
-                        '<img class="chat-image"  src="' +
-                        encodeURI(
-                            'https://static-cdn.jtvnw.net/emoticons/v1/' +
-                                chat.chatEmotes[words[i]].id +
-                                '/1.0'
-                        ) +
-                        '">';
-                    finalMessage = finalMessage.replace(words[i], emoteHtml);
-                }
             }
         }
 
         /**
          * The chat message parsed to html, with twitch emotes.
+         * @TODO parse emotes
          * @event TwitchChatEmitter#Chat:chat_parsed
          * @param {string} channel The channel in which the command was sent.
          * @param {object} userstate The userstate object.
@@ -271,7 +255,7 @@ function _triggerTimedMessage(chat, timedMessage) {
     if (
         !timedMessage.minChatMessages ||
         chat.chatMessageCount >=
-            timedMessage.minChatMessages * (timedMessage.messageCount + 1)
+        timedMessage.minChatMessages * (timedMessage.messageCount + 1)
     ) {
         timedMessage.messageCount++;
         timedMessage.lastTrigger = new Date();
