@@ -86,14 +86,11 @@ The API module must be instanced with the following config object:
 
 Example:
 ```javascript
-const { WebHook } = require('twitch-toolkit');
-const twitchWebHook = new WebHook({
-            client_id: 'id-string',
-            callbackUrl: 'http://domain/path/to/cbUrl'
-        });
-```
+const { Chat, PubSub } = require('twitch-toolkit');
+const twitchPubSub = new PubSub({ reconnect: true });
 
-The Webhook/WebSub requires a public endpoint on the running server/application to receive the data from the hub. Without this, its impossible to make this work.
+twitchPubSub.connect()
+```
 
 The methods and events are described in the [PubSub documentation page](https://chriteixeira.github.io/twitch-toolkit/0.0.9/TwitchPubSub.html)
 
