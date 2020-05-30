@@ -106,7 +106,8 @@ The API module must be instanced with the following config object:
 
 | Name      | Type   |  Description          | 
 | ----------|--------- |----------------------  |
-| client_id           | string | The client ID of the user to be passed to the Hub (un)subscribe requests. This is required. |
+| accessToken | string | The OAuth access token of the user to be passed to the Hub (un)subscribe requests. This is required. |
+| clientId         | string | The client ID of the user to be passed to the Hub (un)subscribe requests. This is required. |
 | callbackUrl         | string | The callback URL that will receive the Hub requests. These requests should be forwarded to the handleRequest method to properly handle these data. This is required. |
 | logger         | object | The logger object. |
 
@@ -114,7 +115,8 @@ Example:
 ```javascript
 const { WebHook } = require('twitch-toolkit');
 const twitchWebHook = new WebHook({
-            client_id: 'id-string',
+            accessToken: 'access-token',
+            clientId: 'id-string',
             callbackUrl: 'http://domain/path/to/cbUrl'
         });
 ```
