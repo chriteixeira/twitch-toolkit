@@ -105,7 +105,7 @@ TwitchPubSub.prototype.reconnect = async function() {
 
 /**
  * Subscribe to a topic based on the type.
- * @param {String[]} types The types array. Valid options: 'bits', 'subscription', 'commerce', 'whisper'
+ * @param {String[]} types The types array. Valid options: 'bits', 'subscription', 'commerce', 'whisper', 'points'
  * @param {String} id The channel/user ID.
  * @param {String} authToken The oauth token with the necessary scopes.
  * @returns {Promise} The subscription promise that will be resolved when it receives the response.
@@ -128,6 +128,9 @@ TwitchPubSub.prototype.subscribe = function(types, id, authToken, isReconnect) {
                     break;
                 case 'whisper':
                     topic = 'whispers';
+                    break;
+                case 'points':
+                    topic = 'channel-points-channel-v1';
                     break;
                 default:
                     throw new Error('Unknown type.');
@@ -253,6 +256,9 @@ function _handleMessage(message) {
             break;
         case 'whispers':
             type = 'whisper';
+            break;
+        case 'channel-points-channel-v1':
+            type = 'points'
             break;
         default:
             this.logger.warn('Unknown topic ' + topicArr[0]);
