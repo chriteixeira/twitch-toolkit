@@ -10,7 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "body-parser": "1.18.3",
-    "express": "4.16.3",
+    "express": "4.17.3",
     "ngrok": "3.0.1",
     "twitch-toolkit": "0.0.7"
   }
